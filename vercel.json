@@ -1,0 +1,5 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run deploy:check",
+  "installCommand": "npm install"
+}

@@ -1,0 +1,22 @@
+# Dependencias y compilacion
+node_modules/
+.next/
+out/
+dist/
+build/
+
+# Configuracion local y datos sensibles
+.env
+.env.local
+.env.*.local
+
+# Cache y archivos temporales
+.npm-cache/
+*.tsbuildinfo
+*.log
+
+# Sistema operativo y editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
