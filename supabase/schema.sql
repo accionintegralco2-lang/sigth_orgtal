@@ -26,16 +26,41 @@ create table if not exists cargos (
 
 create table if not exists personal (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
+  codigo text,
   nombre text not null,
+  cargo text,
+  dependencia text,
   cargo_id uuid references cargos(id) on delete set null,
   dependencia_id uuid references dependencias(id) on delete set null,
   perfil_profesional text,
   experiencia text,
   competencias text[] default '{}',
   tiempo_en_cargo text,
+  numero_funciones integer default 0,
+  complejidad text default 'Media',
+  competencia_tecnica integer,
+  competencia_digital integer,
+  competencia_comportamental integer,
+  autonomia integer,
+  disponibilidad integer,
+  fortalezas text,
   carga_laboral_estimada integer default 0,
   created_at timestamptz default now()
 );
+
+alter table personal add column if not exists client_id text unique;
+alter table personal add column if not exists codigo text;
+alter table personal add column if not exists cargo text;
+alter table personal add column if not exists dependencia text;
+alter table personal add column if not exists numero_funciones integer default 0;
+alter table personal add column if not exists complejidad text default 'Media';
+alter table personal add column if not exists competencia_tecnica integer;
+alter table personal add column if not exists competencia_digital integer;
+alter table personal add column if not exists competencia_comportamental integer;
+alter table personal add column if not exists autonomia integer;
+alter table personal add column if not exists disponibilidad integer;
+alter table personal add column if not exists fortalezas text;
 
 create table if not exists funciones (
   id uuid primary key default gen_random_uuid(),
@@ -160,6 +185,7 @@ values ('evidencias', 'evidencias', true)
 on conflict (id) do nothing;
 
 alter table dependencias enable row level security;
+alter table personal enable row level security;
 alter table evidencias enable row level security;
 
 do $$
@@ -172,6 +198,51 @@ begin
   ) then
     create policy "Lectura publica de dependencias"
     on dependencias for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'personal'
+      and policyname = 'Lectura publica de personal'
+  ) then
+    create policy "Lectura publica de personal"
+    on personal for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'personal'
+      and policyname = 'Registro publico de personal'
+  ) then
+    create policy "Registro publico de personal"
+    on personal for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'personal'
+      and policyname = 'Actualizacion publica de personal'
+  ) then
+    create policy "Actualizacion publica de personal"
+    on personal for update
+    using (true)
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'personal'
+      and policyname = 'Eliminacion publica de personal'
+  ) then
+    create policy "Eliminacion publica de personal"
+    on personal for delete
     using (true);
   end if;
 
