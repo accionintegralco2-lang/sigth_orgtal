@@ -1,11 +1,33 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { OrgDataProvider } from "@/components/org-data-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SIGTH_ORGTAL",
-  description: "Sistema institucional de talento humano, funciones y cargas laborales"
+  metadataBase: new URL("https://sigth-orgtal-ll1g.vercel.app"),
+  title: {
+    default: "SIGTH_ORGTAL",
+    template: "%s | SIGTH_ORGTAL"
+  },
+  applicationName: "SIGTH_ORGTAL",
+  description: "Sistema institucional de talento humano, funciones, cargas laborales, alertas y reportes.",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-touch-icon.svg"
+  },
+  appleWebApp: {
+    capable: true,
+    title: "SIGTH_ORGTAL",
+    statusBarStyle: "default"
+  },
+  formatDetection: {
+    telephone: false
+  }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1f4d43"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

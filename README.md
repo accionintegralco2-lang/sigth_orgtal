@@ -39,6 +39,13 @@ Configuracion incluye un semaforo de preparacion para revisar Supabase,
 dependencias, personal, funciones, encuestas, evidencias y calidad de datos
 antes de mostrar la app a jueces o usuarios externos.
 
+## App instalable
+
+SIGTH_ORGTAL incluye manifiesto web, icono institucional y configuracion PWA
+para que la version publicada pueda instalarse desde el navegador en equipos
+y celulares compatibles. Este es el paso previo recomendado antes de crear un
+paquete Android para Play Store.
+
 ## Instalacion
 
 ```bash

@@ -1,0 +1,21 @@
+{
+  "name": "SIGTH_ORGTAL - Sistema Organizacional de Gestion del Talento Humano",
+  "short_name": "SIGTH_ORGTAL",
+  "description": "Diagnostico organizacional, talento humano, funciones, cargas laborales, alertas y reportes.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#edf1ee",
+  "theme_color": "#1f4d43",
+  "orientation": "portrait-primary",
+  "lang": "es-CO",
+  "categories": ["business", "productivity", "education"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -136,4 +136,21 @@ Antes de la sustentacion:
 
 ## Siguiente paso despues de publicar
 
-Cuando la URL publica funcione, se prepara la version PWA y luego el paquete Android para Play Store.
+Cuando la URL publica funcione, la app ya queda preparada como PWA instalable
+desde el navegador. El siguiente paso para Play Store seria empaquetar esa URL
+publica como Android usando Trusted Web Activity o una envoltura WebView,
+manteniendo primero la web estable en Vercel y conectada a Supabase.
+
+## PWA instalable
+
+SIGTH_ORGTAL incluye:
+
+- Manifiesto web en `public/manifest.webmanifest`.
+- Icono institucional en `public/icon.svg`.
+- Metadatos de instalacion en `app/layout.tsx`.
+- Inicio recomendado en `/dashboard`.
+
+Esto permite mostrar a los jueces una app web publica que tambien puede
+instalarse como acceso directo en celulares compatibles. Para publicarla en
+Play Store se recomienda hacerlo despues de validar usuarios, Supabase,
+seguridad por roles y carga real de datos.

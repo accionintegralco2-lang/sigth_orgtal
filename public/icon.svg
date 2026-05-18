@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">SIGTH_ORGTAL</title>
+  <desc id="desc">Icono institucional de SIGTH_ORGTAL</desc>
+  <rect width="512" height="512" rx="92" fill="#1f4d43"/>
+  <path d="M104 128h304v64H104z" fill="#d9c27f"/>
+  <path d="M104 220h304v164H104z" fill="#f6f8f4"/>
+  <path d="M142 260h228v18H142zm0 46h178v18H142zm0 46h132v18H142z" fill="#1f4d43"/>
+  <circle cx="365" cy="335" r="45" fill="#b08a3c"/>
+  <path d="M346 334l14 14 28-35" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 76l162 52H94z" fill="#b08a3c"/>
+  <text x="256" y="176" fill="#1f4d43" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" text-anchor="middle">SIGTH</text>
+</svg>
