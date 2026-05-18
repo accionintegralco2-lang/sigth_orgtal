@@ -64,8 +64,10 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
   const [workspaceMode, setWorkspaceMode] = useState<"piloto" | "propio">("piloto");
   const [activeRole, setActiveRole] = useState<UserRole>("Administrador");
   const [isReady, setIsReady] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     const stored = window.localStorage.getItem(storageKey);
     if (stored) {
       const parsed = JSON.parse(stored) as {
@@ -229,7 +231,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
     [activeRole, alertsState, depsState, evidenceState, functionsState, interviewsState, peopleState, workspaceMode]
   );
 
-  if (!isReady) {
+  if (!hasMounted || !isReady) {
     return (
       <div className="app-loading-screen">
         <strong>SIGTH_ORGTAL</strong>
