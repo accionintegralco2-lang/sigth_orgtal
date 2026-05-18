@@ -939,6 +939,65 @@ button {
   line-height: 1.45;
 }
 
+.share-panel {
+  border-color: rgba(31, 77, 67, 0.18);
+}
+
+.share-link-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.share-link-card {
+  min-height: 144px;
+  display: grid;
+  gap: 14px;
+  align-content: space-between;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.share-link-card strong {
+  color: var(--brand);
+}
+
+.share-link-card p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.share-link-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.share-link-actions a,
+.share-link-actions button {
+  min-height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(31, 77, 67, 0.2);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--brand);
+  cursor: pointer;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.share-link-actions a:hover,
+.share-link-actions button:hover {
+  border-color: var(--brand);
+  background: rgba(31, 77, 67, 0.08);
+}
+
 .panel {
   padding: 22px;
   border-top: 4px solid rgba(31, 77, 67, 0.22);
@@ -3521,6 +3580,7 @@ td {
   .report-preflight,
   .report-cover,
   .role-grid,
+  .share-link-grid,
   .signature-grid,
   .survey-grid,
   .supabase-status-grid,

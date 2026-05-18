@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { DiagnosisProgressPanel } from "@/components/diagnosis-progress-panel";
@@ -9,6 +9,7 @@ import { RiskBadge } from "@/components/risk-badge";
 import { getAlerts, getDashboardMetrics } from "@/lib/calculations";
 
 export function DashboardView() {
+  const [copiedLink, setCopiedLink] = useState("");
   const data = useOrgData();
   const metrics = getDashboardMetrics(data);
   const alerts = getAlerts(data);
@@ -103,6 +104,28 @@ export function DashboardView() {
       href: "/configuracion"
     }
   ];
+  const shareLinks = [
+    {
+      label: "App publica",
+      path: "/dashboard",
+      detail: "Ingreso directo al tablero ejecutivo."
+    },
+    {
+      label: "Encuesta personal",
+      path: "/encuesta/personal",
+      detail: "Formulario externo para funcionarios."
+    },
+    {
+      label: "Rubrica expertos",
+      path: "/encuesta/expertos",
+      detail: "Instrumento para validadores."
+    },
+    {
+      label: "Reporte",
+      path: "/reportes",
+      detail: "Vista previa del informe institucional."
+    }
+  ];
   const executivePriorities = [
     {
       title: "Prioridad funcional",
@@ -129,6 +152,16 @@ export function DashboardView() {
       detail: criticalAlerts > 0 ? "Requieren plan de accion y responsable de cierre." : "No hay alertas criticas activas."
     }
   ];
+
+  async function copyShareLink(path: string, label: string) {
+    const url = `${window.location.origin}${path}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(`${label}: enlace copiado.`);
+    } catch {
+      setCopiedLink(`Copia manualmente: ${url}`);
+    }
+  }
 
   return (
     <AppShell>
@@ -222,6 +255,34 @@ export function DashboardView() {
               </Link>
             ))}
           </div>
+        </section>
+
+        <section className="panel share-panel">
+          <div className="panel-heading">
+            <h2>Enlaces para compartir</h2>
+            <span>Acceso externo</span>
+          </div>
+          <p>
+            Copia accesos directos para jueces, funcionarios, expertos o jefes
+            de dependencia sin explicar toda la navegacion del sistema.
+          </p>
+          <div className="share-link-grid">
+            {shareLinks.map((item) => (
+              <article className="share-link-card" key={item.path}>
+                <div>
+                  <strong>{item.label}</strong>
+                  <p>{item.detail}</p>
+                </div>
+                <div className="share-link-actions">
+                  <Link href={item.path}>Abrir</Link>
+                  <button type="button" onClick={() => copyShareLink(item.path, item.label)}>
+                    Copiar
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+          {copiedLink ? <p className="import-message">{copiedLink}</p> : null}
         </section>
 
         <section className="panel executive-summary">
