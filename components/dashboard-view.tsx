@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { DiagnosisProgressPanel } from "@/components/diagnosis-progress-panel";
 import { useOrgData } from "@/components/org-data-provider";
@@ -32,6 +33,44 @@ export function DashboardView() {
   const criticalAlerts = alerts.filter((alert) => alert.nivel === "critico").length;
   const topWorkload = [...data.personal].sort((a, b) => b.cargaLaboral - a.cargaLaboral)[0];
   const highestRiskDependency = [...metrics.riesgosPorDependencia].sort((a, b) => b.valor - a.valor)[0];
+  const quickStartSteps = [
+    {
+      title: "Crear dependencia",
+      detail: data.dependencias.length ? `${data.dependencias.length} registrada(s)` : "Iniciar una dependencia nueva",
+      href: "/configuracion",
+      ready: data.dependencias.length > 0
+    },
+    {
+      title: "Cargar personal",
+      detail: data.personal.length ? `${data.personal.length} funcionario(s)` : "Registrar funcionarios o importar CSV",
+      href: "/personal",
+      ready: data.personal.length > 0
+    },
+    {
+      title: "Asignar funciones",
+      detail: data.funciones.length ? `${data.funciones.length} funcion(es)` : "Registrar responsables y respaldos",
+      href: "/funciones",
+      ready: data.funciones.length > 0
+    },
+    {
+      title: "Agregar evidencias",
+      detail: data.evidencias.length ? `${data.evidencias.length} soporte(s)` : "Subir actas, organigramas o anexos",
+      href: "/evidencias",
+      ready: data.evidencias.length > 0
+    },
+    {
+      title: "Revisar alertas",
+      detail: alerts.length ? `${alerts.length} alerta(s) activa(s)` : "Sin alertas activas",
+      href: "/alertas",
+      ready: alerts.length === 0
+    },
+    {
+      title: "Generar reporte",
+      detail: "Validar informe antes de imprimir",
+      href: "/reportes",
+      ready: data.dependencias.length > 0 && data.personal.length > 0 && data.funciones.length > 0
+    }
+  ];
   const executivePriorities = [
     {
       title: "Prioridad funcional",
@@ -110,6 +149,27 @@ export function DashboardView() {
         </section>
 
         <DiagnosisProgressPanel data={data} />
+
+        <section className="panel quick-start-panel">
+          <div className="panel-heading">
+            <h2>Primeros pasos para una dependencia nueva</h2>
+            <span>Ruta guiada</span>
+          </div>
+          <p>
+            Usa este orden para que cualquier dependencia pueda pasar de datos
+            iniciales a reporte sin perderse en los modulos.
+          </p>
+          <div className="quick-start-grid">
+            {quickStartSteps.map((step, index) => (
+              <Link className={step.ready ? "quick-start-card ready" : "quick-start-card pending"} href={step.href} key={step.title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step.title}</strong>
+                <p>{step.detail}</p>
+                <small>{step.ready ? "Listo" : "Abrir modulo"}</small>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section className="panel executive-summary">
           <div className="panel-heading">
