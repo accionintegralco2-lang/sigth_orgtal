@@ -2,6 +2,9 @@
 
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { alertasPiloto, dependencias, entrevistas, funciones, personal } from "@/data/mock-data";
+import { deleteDependencyRecord, fetchDependencyRecords, saveDependencyRecord } from "@/lib/dependency-repository";
+import { deleteEvidenceRecord, fetchEvidenceRecords, saveEvidenceRecord } from "@/lib/evidence-repository";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import type { Alert, Dependencia, Entrevista, Evidencia, Funcion, Persona, UserRole } from "@/types";
 
 type OrgDataContextValue = {
@@ -86,6 +89,30 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    fetchDependencyRecords()
+      .then((records) => {
+        if (records.length) {
+          setDepsState(records);
+          setWorkspaceMode("propio");
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudieron cargar dependencias desde Supabase", error);
+      });
+
+    fetchEvidenceRecords()
+      .then((records) => {
+        if (records.length) {
+          setEvidenceState(records);
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudieron cargar evidencias desde Supabase", error);
+      });
+  }, []);
+
+  useEffect(() => {
     if (!isReady) return;
     window.localStorage.setItem(
       storageKey,
@@ -112,7 +139,14 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
       workspaceMode,
       activeRole,
       setActiveRole,
-      addDependencia: (item) => setDepsState((current) => [{ ...item, id: makeId("dep") }, ...current]),
+      addDependencia: (item) => {
+        const dependencia = { ...item, id: makeId("dep") };
+        setDepsState((current) => [dependencia, ...current]);
+        setWorkspaceMode("propio");
+        saveDependencyRecord(dependencia).catch((error) => {
+          console.warn("No se pudo guardar la dependencia en Supabase", error);
+        });
+      },
       addPersona: (item) => setPeopleState((current) => [{ ...item, id: makeId("per") }, ...current]),
       addPersonas: (items) =>
         setPeopleState((current) => [
@@ -126,12 +160,28 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
           ...current
         ]),
       addEntrevista: (item) => setInterviewsState((current) => [{ ...item, id: makeId("ent") }, ...current]),
-      addEvidencia: (item) => setEvidenceState((current) => [{ ...item, id: makeId("evi") }, ...current]),
-      removeDependencia: (id) => setDepsState((current) => current.filter((item) => item.id !== id)),
+      addEvidencia: (item) => {
+        const evidence = { ...item, id: makeId("evi") };
+        setEvidenceState((current) => [evidence, ...current]);
+        saveEvidenceRecord(evidence).catch((error) => {
+          console.warn("No se pudo guardar la evidencia en Supabase", error);
+        });
+      },
+      removeDependencia: (id) => {
+        setDepsState((current) => current.filter((item) => item.id !== id));
+        deleteDependencyRecord(id).catch((error) => {
+          console.warn("No se pudo eliminar la dependencia en Supabase", error);
+        });
+      },
       removePersona: (id) => setPeopleState((current) => current.filter((item) => item.id !== id)),
       removeFuncion: (id) => setFunctionsState((current) => current.filter((item) => item.id !== id)),
       removeEntrevista: (id) => setInterviewsState((current) => current.filter((item) => item.id !== id)),
-      removeEvidencia: (id) => setEvidenceState((current) => current.filter((item) => item.id !== id)),
+      removeEvidencia: (id) => {
+        setEvidenceState((current) => current.filter((item) => item.id !== id));
+        deleteEvidenceRecord(id).catch((error) => {
+          console.warn("No se pudo eliminar la evidencia en Supabase", error);
+        });
+      },
       resetDemoData: () => {
         setDepsState(dependencias);
         setPeopleState(personal);
@@ -143,13 +193,17 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         window.localStorage.removeItem(storageKey);
       },
       startNewDiagnosis: (item) => {
-        setDepsState([{ ...item, id: makeId("dep") }]);
+        const dependencia = { ...item, id: makeId("dep") };
+        setDepsState([dependencia]);
         setPeopleState([]);
         setFunctionsState([]);
         setInterviewsState([]);
         setEvidenceState([]);
         setWorkspaceMode("propio");
         setActiveRole("Administrador");
+        saveDependencyRecord(dependencia).catch((error) => {
+          console.warn("No se pudo guardar la nueva dependencia en Supabase", error);
+        });
       },
       exportWorkspace: () => ({
         version: 1,

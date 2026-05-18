@@ -1,14 +1,19 @@
 create table if not exists dependencias (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
   nombre text not null,
   jefe_responsable text,
   mision text,
   procesos text[] default '{}',
   numero_personas integer default 0,
   criticidad text default 'Media',
+  estado text default 'En diagnostico',
   observaciones text,
   created_at timestamptz default now()
 );
+
+alter table dependencias add column if not exists client_id text unique;
+alter table dependencias add column if not exists estado text default 'En diagnostico';
 
 create table if not exists cargos (
   id uuid primary key default gen_random_uuid(),
@@ -101,7 +106,9 @@ create table if not exists reportes (
 
 create table if not exists evidencias (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
   dependencia_id uuid references dependencias(id) on delete set null,
+  dependencia text,
   nombre text not null,
   url text,
   tipo text,
@@ -111,6 +118,9 @@ create table if not exists evidencias (
   observaciones text,
   created_at timestamptz default now()
 );
+
+alter table evidencias add column if not exists client_id text unique;
+alter table evidencias add column if not exists dependencia text;
 
 create table if not exists usuarios (
   id uuid primary key default gen_random_uuid(),
@@ -148,6 +158,102 @@ create table if not exists encuestas_respuestas (
 insert into storage.buckets (id, name, public)
 values ('evidencias', 'evidencias', true)
 on conflict (id) do nothing;
+
+alter table dependencias enable row level security;
+alter table evidencias enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'dependencias'
+      and policyname = 'Lectura publica de dependencias'
+  ) then
+    create policy "Lectura publica de dependencias"
+    on dependencias for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'dependencias'
+      and policyname = 'Registro publico de dependencias'
+  ) then
+    create policy "Registro publico de dependencias"
+    on dependencias for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'dependencias'
+      and policyname = 'Actualizacion publica de dependencias'
+  ) then
+    create policy "Actualizacion publica de dependencias"
+    on dependencias for update
+    using (true)
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'dependencias'
+      and policyname = 'Eliminacion publica de dependencias'
+  ) then
+    create policy "Eliminacion publica de dependencias"
+    on dependencias for delete
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'evidencias'
+      and policyname = 'Lectura publica de evidencias'
+  ) then
+    create policy "Lectura publica de evidencias"
+    on evidencias for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'evidencias'
+      and policyname = 'Registro publico de evidencias'
+  ) then
+    create policy "Registro publico de evidencias"
+    on evidencias for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'evidencias'
+      and policyname = 'Actualizacion publica de evidencias'
+  ) then
+    create policy "Actualizacion publica de evidencias"
+    on evidencias for update
+    using (true)
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'evidencias'
+      and policyname = 'Eliminacion publica de evidencias'
+  ) then
+    create policy "Eliminacion publica de evidencias"
+    on evidencias for delete
+    using (true);
+  end if;
+end $$;
 
 do $$
 begin

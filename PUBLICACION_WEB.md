@@ -82,6 +82,8 @@ Orden recomendado:
 
 Si Git vuelve a bloquearse, usar la ruta manual explicada en `SUBIR_WEB_MANUAL.md`.
 
+Si Windows bloquea cualquier carpeta `.git`, usar `PUBLICAR_SIGTH_ORGTAL_REPO_INTERNO.bat`. Ese archivo publica desde `C:\Desarrollo\SIGTH_ORGTAL` usando un repositorio interno separado que evita el bloqueo.
+
 ## Reparar bloqueo de OneDrive con Git
 
 Si aparece `Permission denied` o `index.lock`, usar este orden:
@@ -89,13 +91,32 @@ Si aparece `Permission denied` o `index.lock`, usar este orden:
 1. Ejecutar `REPARAR_GIT_ONEDRIVE_ADMIN.bat` como administrador.
 2. Si sigue fallando, pausar OneDrive.
 3. Ejecutar `MOVER_A_C_DESARROLLO_SIGTH_ORGTAL.bat` para copiar el proyecto a `C:\Desarrollo\SIGTH_ORGTAL`.
-4. Trabajar desde la nueva carpeta fuera de OneDrive.
+4. Si Git queda bloqueado en la nueva carpeta, ejecutar `REPARAR_GIT_C_DESARROLLO_ADMIN.bat` como administrador.
+5. Si todavia aparece una regla `DENY`, ejecutar `DESBLOQUEAR_DENY_GIT_C_DESARROLLO_ADMIN.bat` como administrador.
+6. Trabajar desde la nueva carpeta fuera de OneDrive.
 
 ## Supabase para produccion
 
 En Supabase se debe ejecutar el archivo `supabase/schema.sql`. Ese archivo crea las tablas principales y el bucket `evidencias` para documentos.
 
 Para la demostracion ante jueces, se puede publicar primero sin Supabase y usar los datos piloto. Para uso real con nuevas dependencias, se recomienda conectar Supabase antes de entregar usuarios externos.
+
+## Activar evidencias reales
+
+La primera conexion real con Supabase queda aplicada a los modulos de dependencias y evidencias. Cuando las variables de Supabase esten configuradas, las dependencias nuevas y los registros de evidencias se guardan en la base de datos. Si Supabase todavia no esta conectado, la app sigue funcionando con datos locales para la demostracion.
+
+Pasos:
+
+1. Entrar al proyecto en Supabase.
+2. Abrir SQL Editor.
+3. Copiar y ejecutar el contenido completo de `supabase/schema.sql`.
+4. Confirmar que exista el bucket `evidencias`.
+5. En Vercel, abrir Settings > Environment Variables.
+6. Agregar `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `NEXT_PUBLIC_SUPABASE_EVIDENCE_BUCKET`.
+7. Redeploy del proyecto en Vercel.
+8. En la app, entrar a Configuracion y probar la conexion.
+
+Nota: para la sustentacion se dejan permisos amplios en evidencias para facilitar la prueba publica. Cuando se activen usuarios reales y roles, esos permisos deben cerrarse por rol.
 
 ## Recomendacion para jueces
 
