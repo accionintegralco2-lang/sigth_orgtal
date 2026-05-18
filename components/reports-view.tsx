@@ -31,10 +31,10 @@ export function ReportsView() {
   const quality = buildDataQualitySummary(data);
   const reportReady = quality.criticalIssues === 0;
   const criticalIssues = quality.issues.filter((issue) => issue.severidad === "critico");
-  const reportDate = buildReportDate();
-  const filenameDate = new Date().toISOString().slice(0, 10);
+  const reportDate = buildReportDate(new Date("2026-05-17T12:00:00-05:00"));
 
   function exportAlerts() {
+    const filenameDate = new Date().toISOString().slice(0, 10);
     const rows = [
       ["Nivel", "Titulo", "Descripcion", "Origen", "Accion"],
       ...alerts.map((alert) => [
@@ -50,6 +50,7 @@ export function ReportsView() {
   }
 
   function exportPlan() {
+    const filenameDate = new Date().toISOString().slice(0, 10);
     const rows = [
       ["Prioridad", "Hallazgo", "Accion sugerida", "Responsable", "Plazo"],
       ...plan.map((item) => [item.prioridad, item.hallazgo, item.accion, item.responsable, item.plazo])

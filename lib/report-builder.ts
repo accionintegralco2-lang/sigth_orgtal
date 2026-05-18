@@ -79,10 +79,11 @@ export function buildExecutiveFindings(data: ReportData): string[] {
   ];
 }
 
-export function buildReportDate() {
+export function buildReportDate(date = new Date()) {
   return new Intl.DateTimeFormat("es-CO", {
+    timeZone: "America/Bogota",
     day: "2-digit",
     month: "long",
     year: "numeric"
-  }).format(new Date());
+  }).format(date);
 }
