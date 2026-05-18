@@ -33,6 +33,12 @@ La app incluye modo usuario simple para orientar la navegacion:
 - Experto validador: rubrica, juicio de expertos y validacion.
 - Personal: encuesta funcional y matriz de funciones.
 
+## Preparacion para produccion
+
+Configuracion incluye un semaforo de preparacion para revisar Supabase,
+dependencias, personal, funciones, encuestas, evidencias y calidad de datos
+antes de mostrar la app a jueces o usuarios externos.
+
 ## Instalacion
 
 ```bash

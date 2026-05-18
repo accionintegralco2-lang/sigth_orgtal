@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData, type WorkspaceBackup } from "@/components/org-data-provider";
+import { buildDataQualitySummary } from "@/lib/data-quality";
 import { dependencyTemplates, templateToForm } from "@/lib/dependency-templates";
 import { supabaseStatus, testSupabaseEvidenceStorage } from "@/lib/supabase";
 import type { Funcion, Persona, RiskLevel } from "@/types";
@@ -64,6 +65,62 @@ export function SettingsView() {
   const [isTestingSupabase, setIsTestingSupabase] = useState(false);
   const bulkErrors = bulkPreview?.issues.filter((issue) => issue.type === "error") ?? [];
   const bulkWarnings = bulkPreview?.issues.filter((issue) => issue.type === "warning") ?? [];
+  const qualitySummary = buildDataQualitySummary({
+    dependencias,
+    personal,
+    funciones,
+    entrevistas,
+    evidencias,
+    alertas: []
+  });
+  const productionChecks = [
+    {
+      label: "Base de datos Supabase",
+      ready: supabaseStatus.configured,
+      detail: supabaseStatus.configured ? "Variables configuradas" : "Faltan variables en Vercel o .env.local",
+      action: "Configurar Supabase"
+    },
+    {
+      label: "Dependencia activa",
+      ready: dependencias.length > 0,
+      detail: `${dependencias.length} dependencia(s) registradas`,
+      action: "Crear dependencia"
+    },
+    {
+      label: "Personal cargado",
+      ready: personal.length > 0,
+      detail: `${personal.length} funcionario(s) cargados`,
+      action: "Cargar personal"
+    },
+    {
+      label: "Funciones registradas",
+      ready: funciones.length > 0,
+      detail: `${funciones.length} funcion(es) registradas`,
+      action: "Cargar funciones"
+    },
+    {
+      label: "Encuestas disponibles",
+      ready: entrevistas.length > 0,
+      detail: `${entrevistas.length} instrumento(s) registrados`,
+      action: "Crear encuesta"
+    },
+    {
+      label: "Evidencias",
+      ready: evidencias.length > 0,
+      detail: `${evidencias.length} soporte(s) documentales`,
+      action: "Agregar evidencia"
+    },
+    {
+      label: "Calidad de datos",
+      ready: qualitySummary.criticalIssues === 0,
+      detail: qualitySummary.criticalIssues
+        ? `${qualitySummary.criticalIssues} dato(s) criticos pendientes`
+        : `Calidad ${qualitySummary.score}%`,
+      action: "Corregir datos"
+    }
+  ];
+  const productionReadyCount = productionChecks.filter((item) => item.ready).length;
+  const productionScore = Math.round((productionReadyCount / productionChecks.length) * 100);
 
   function submitNewDiagnosis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -377,6 +434,34 @@ export function SettingsView() {
             <strong>{evidencias.length}</strong>
             <p>Soportes documentales</p>
           </article>
+        </section>
+
+        <section className={`panel setup-panel production-readiness ${productionScore >= 85 ? "ready" : "watch"}`}>
+          <div className="panel-heading">
+            <h2>Preparacion para uso externo</h2>
+            <span>{productionScore}% listo</span>
+          </div>
+          <p>
+            Control rapido para saber si SIGTH_ORGTAL esta listo para jueces,
+            usuarios externos o carga de una dependencia nueva.
+          </p>
+          <div className="readiness-meter">
+            <strong>{productionScore}%</strong>
+            <span>{productionReadyCount} de {productionChecks.length} criterios completos</span>
+            <div>
+              <i style={{ width: `${productionScore}%` }} />
+            </div>
+          </div>
+          <div className="readiness-grid">
+            {productionChecks.map((check) => (
+              <article className={check.ready ? "is-ready" : "is-pending"} key={check.label}>
+                <span>{check.ready ? "Listo" : "Pendiente"}</span>
+                <strong>{check.label}</strong>
+                <p>{check.detail}</p>
+                {!check.ready ? <small>{check.action}</small> : null}
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="dashboard-grid">
