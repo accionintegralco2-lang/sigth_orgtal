@@ -71,6 +71,38 @@ export function DashboardView() {
       ready: data.dependencias.length > 0 && data.personal.length > 0 && data.funciones.length > 0
     }
   ];
+  const demoSteps = [
+    {
+      title: "Abrir tablero ejecutivo",
+      detail: "Mostrar riesgo general, avance, alertas y prioridades.",
+      href: "/dashboard"
+    },
+    {
+      title: "Explicar matriz funcional",
+      detail: "Evidenciar responsables, respaldos, duplicidades y vacios.",
+      href: "/matriz-funcion-persona"
+    },
+    {
+      title: "Mostrar encuestas",
+      detail: "Abrir enlaces externos para personal y expertos validadores.",
+      href: "/entrevistas"
+    },
+    {
+      title: "Revisar evidencias",
+      detail: "Sustentar actas, soportes, organigramas y anexos.",
+      href: "/evidencias"
+    },
+    {
+      title: "Generar informe",
+      detail: "Validar hallazgos antes de imprimir o exportar.",
+      href: "/reportes"
+    },
+    {
+      title: "Instalar app",
+      detail: "Demostrar que funciona como web instalable.",
+      href: "/configuracion"
+    }
+  ];
   const executivePriorities = [
     {
       title: "Prioridad funcional",
@@ -166,6 +198,27 @@ export function DashboardView() {
                 <strong>{step.title}</strong>
                 <p>{step.detail}</p>
                 <small>{step.ready ? "Listo" : "Abrir modulo"}</small>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel demo-panel">
+          <div className="panel-heading">
+            <h2>Guia rapida para sustentacion</h2>
+            <span>Demostracion ante jueces</span>
+          </div>
+          <p>
+            Sigue esta secuencia para presentar SIGTH_ORGTAL como producto
+            funcional: primero el diagnostico, luego la evidencia y finalmente
+            el informe.
+          </p>
+          <div className="demo-flow">
+            {demoSteps.map((step, index) => (
+              <Link className="demo-step-card" href={step.href} key={step.title}>
+                <span>{index + 1}</span>
+                <strong>{step.title}</strong>
+                <p>{step.detail}</p>
               </Link>
             ))}
           </div>
