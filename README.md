@@ -4,6 +4,12 @@ Sistema Organizacional de Gestion del Talento Humano, Funciones y Cargas Laboral
 
 Esta primera version es una app web institucional creada con Next.js y preparada para conectarse a Supabase. Incluye dashboard ejecutivo, modulos base, datos de prueba, calculos de carga laboral, alertas automaticas y modelo inicial de base de datos.
 
+## Autor
+
+Derechos de autor, creacion e innovacion tecnologica: **Edwyn Arvey Lopez Acosta**.
+
+SIGTH_ORGTAL se presenta como una propuesta de innovacion tecnologica aplicada al diagnostico organizacional, talento humano, funciones y cargas laborales.
+
 ## Modulos incluidos
 
 - Dashboard ejecutivo

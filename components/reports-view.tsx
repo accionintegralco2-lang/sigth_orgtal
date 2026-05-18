@@ -223,6 +223,10 @@ export function ReportsView() {
                 Sistema Organizacional de Gestion del Talento Humano, Funciones
                 y Cargas Laborales.
               </p>
+              <p className="report-author-credit">
+                Derechos de autor, creacion e innovacion tecnologica:
+                Edwyn Arvey Lopez Acosta.
+              </p>
             </div>
             <dl>
               <div>
@@ -360,6 +364,10 @@ export function ReportsView() {
           </article>
 
           <section className="signature-grid">
+            <div>
+              <span>Autor del modelo</span>
+              <strong>Edwyn Arvey Lopez Acosta</strong>
+            </div>
             <div>
               <span>Elaboro</span>
               <strong>Analista de talento humano</strong>

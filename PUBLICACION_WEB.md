@@ -9,6 +9,12 @@ Publicar SIGTH_ORGTAL en internet con dos usos:
 - Modo demostracion: datos piloto para jueces.
 - Modo produccion: carga real de dependencias nuevas.
 
+## Autor y derechos
+
+Derechos de autor, creacion e innovacion tecnologica: **Edwyn Arvey Lopez Acosta**.
+
+El nombre del autor debe mantenerse visible en la pantalla inicial, configuracion, reporte formal y documentacion del proyecto.
+
 ## Estado actual
 
 La app ya esta preparada para publicarse como una web Next.js. Puede abrir en modo demostracion sin Supabase y tambien queda lista para conectar base de datos real cuando se configuren las variables.

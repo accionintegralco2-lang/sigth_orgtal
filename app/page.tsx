@@ -11,6 +11,9 @@ export default function HomePage() {
             Diagnostico organizacional, talento humano, funciones, cargas laborales,
             alertas y reportes para la toma de decisiones.
           </p>
+          <p className="author-credit">
+            Derechos de autor, creacion e innovacion tecnologica: Edwyn Arvey Lopez Acosta.
+          </p>
         </div>
 
         <div className="login-card">
@@ -19,6 +22,9 @@ export default function HomePage() {
           <p>
             Esta version usa datos de prueba y queda preparada para conectarse a
             Supabase Auth.
+          </p>
+          <p className="login-author">
+            Modelo y desarrollo conceptual: Edwyn Arvey Lopez Acosta.
           </p>
           <Link className="primary-action" href="/dashboard">
             Ingresar al dashboard

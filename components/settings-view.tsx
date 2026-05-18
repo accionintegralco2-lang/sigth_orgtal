@@ -336,6 +336,21 @@ export function SettingsView() {
           <span className="status-pill">{workspaceMode === "piloto" ? "Modo piloto" : "Diagnostico propio"}</span>
         </section>
 
+        <section className="panel setup-panel author-panel">
+          <div className="panel-heading">
+            <h2>Autor y derechos de creacion</h2>
+            <span>Innovacion tecnologica</span>
+          </div>
+          <p>
+            SIGTH_ORGTAL se presenta como una solucion de diagnostico organizacional
+            basada en el modelo creado por Edwyn Arvey Lopez Acosta.
+          </p>
+          <div className="author-statement">
+            <span>Derechos de autor, creacion e innovacion tecnologica</span>
+            <strong>Edwyn Arvey Lopez Acosta</strong>
+          </div>
+        </section>
+
         <section className="function-summary-grid">
           <article>
             <span>Dependencias</span>

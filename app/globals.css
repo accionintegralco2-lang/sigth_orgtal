@@ -95,6 +95,13 @@ button {
   line-height: 1.55;
 }
 
+.author-credit {
+  max-width: 620px;
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+}
+
 .login-card {
   background: rgba(255, 255, 255, 0.94);
   color: var(--text);
@@ -102,6 +109,15 @@ button {
   border-radius: 8px;
   padding: 28px;
   box-shadow: var(--shadow);
+}
+
+.login-author {
+  padding: 12px 14px;
+  border: 1px solid rgba(31, 77, 67, 0.16);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--brand-strong);
+  font-weight: 700;
 }
 
 .login-card h2 {
@@ -218,6 +234,12 @@ button {
 .sidebar-footer strong {
   color: #fff;
   font-size: 14px;
+}
+
+.sidebar-footer small {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .content-shell {
@@ -1763,6 +1785,12 @@ td {
   line-height: 1.5;
 }
 
+.report-author-credit {
+  margin-top: 18px;
+  color: #f0d89a;
+  font-weight: 800;
+}
+
 .report-cover dl {
   display: grid;
   gap: 10px;
@@ -1835,7 +1863,7 @@ td {
 
 .signature-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   padding-top: 36px;
 }

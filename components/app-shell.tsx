@@ -37,6 +37,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="sidebar-footer">
           <span>Modo usuario simple</span>
           <strong>{activeRole}</strong>
+          <small>Autor: Edwyn Arvey Lopez Acosta</small>
         </div>
       </aside>
       <div className="content-shell">
