@@ -229,6 +229,15 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
     [activeRole, alertsState, depsState, evidenceState, functionsState, interviewsState, peopleState, workspaceMode]
   );
 
+  if (!isReady) {
+    return (
+      <div className="app-loading-screen">
+        <strong>SIGTH_ORGTAL</strong>
+        <span>Preparando diagnostico institucional...</span>
+      </div>
+    );
+  }
+
   return <OrgDataContext.Provider value={value}>{children}</OrgDataContext.Provider>;
 }
 
