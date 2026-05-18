@@ -72,6 +72,20 @@ export function FunctionsManager() {
   const duplicatedCount = funciones.filter((item) => item.tipo === "Duplicada").length;
   const unassignedCount = funciones.filter((item) => !item.responsable).length;
   const totalHours = funciones.reduce((total, item) => total + (item.horasSemana ?? 0), 0);
+  const selectedResponsible = personal.find((item) => (item.codigo || item.nombre) === form.responsable);
+  const selectedResponsibleFunctions = form.responsable
+    ? funciones.filter((item) => item.responsable === form.responsable).length
+    : 0;
+  const functionsByPerson = personal.map((person) => {
+    const key = person.codigo || person.nombre;
+    return {
+      id: person.id,
+      label: `${key} - ${person.cargo}`,
+      dependencia: person.dependencia,
+      expected: person.funciones,
+      assigned: funciones.filter((item) => item.responsable === key).length
+    };
+  });
 
   function submitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -129,6 +143,11 @@ export function FunctionsManager() {
                 ))}
               </select>
               <small className="field-help">Es la persona principal que responde por el cumplimiento de la funcion.</small>
+              {selectedResponsible ? (
+                <small className="field-help">
+                  {selectedResponsible.codigo || selectedResponsible.nombre} tiene {selectedResponsibleFunctions} funcion(es) asignada(s) en la matriz y declaro {selectedResponsible.funciones}.
+                </small>
+              ) : null}
             </label>
             <label>
               Respaldo
@@ -246,6 +265,33 @@ export function FunctionsManager() {
             <strong>{totalHours}</strong>
             <p>Carga estimada de funciones</p>
           </article>
+        </section>
+
+        <section className="panel capacity-panel">
+          <div className="panel-heading">
+            <h2>Funciones variables por persona</h2>
+            <span>Control de asignacion</span>
+          </div>
+          <p>
+            Cada cargo puede tener una cantidad distinta de funciones. Esta
+            comparacion ayuda a ver si lo asignado en la matriz coincide con lo
+            declarado en el modulo de personal.
+          </p>
+          <div className="capacity-grid">
+            {functionsByPerson.map((item) => {
+              const gap = item.expected - item.assigned;
+              return (
+                <article key={item.id}>
+                  <strong>{item.label}</strong>
+                  <p>{item.dependencia}</p>
+                  <span>
+                    Matriz: {item.assigned} / Declaradas: {item.expected}
+                    {gap > 0 ? ` - faltan ${gap}` : gap < 0 ? ` - excede ${Math.abs(gap)}` : " - equilibrado"}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
         <section className="panel">

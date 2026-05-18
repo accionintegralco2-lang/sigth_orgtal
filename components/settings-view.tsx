@@ -13,10 +13,14 @@ const initialDiagnosis = {
   jefe: "",
   mision: "",
   procesos: "",
-  personas: 0,
+  personas: 1,
   criticidad: "Media",
   estado: "Seguimiento"
 };
+
+function clampPeopleCount(value: number) {
+  return Math.max(1, Math.min(30, Math.round(value || 1)));
+}
 
 type CsvRow = Record<string, string>;
 type BulkTarget = "personal" | "funciones";
@@ -160,7 +164,7 @@ export function SettingsView() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
-      personas: Number(form.personas) || 0,
+      personas: clampPeopleCount(Number(form.personas) || 1),
       criticidad: form.criticidad,
       estado: form.estado
     });
@@ -576,11 +580,13 @@ export function SettingsView() {
               <label>
                 Personas estimadas
                 <input
-                  min="0"
+                  max="30"
+                  min="1"
                   type="number"
                   value={form.personas}
-                  onChange={(event) => setForm({ ...form, personas: Number(event.target.value) })}
+                  onChange={(event) => setForm({ ...form, personas: clampPeopleCount(Number(event.target.value)) })}
                 />
+                <small className="field-help">Rango operativo sugerido: de 1 a 30 personas por dependencia.</small>
               </label>
               <label>
                 Criticidad

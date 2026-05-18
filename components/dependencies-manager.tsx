@@ -22,6 +22,10 @@ function percent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+function clampPeopleCount(value: number) {
+  return Math.max(1, Math.min(30, Math.round(value || 1)));
+}
+
 function alertBelongsToDependency(alert: Alert, dependencia: Dependencia, peopleByDep: Persona[], functionsByDep: Funcion[]) {
   const text = [alert.titulo, alert.descripcion, alert.origen, alert.codigo, alert.condicion].join(" ").toLowerCase();
   if (text.includes(dependencia.nombre.toLowerCase())) return true;
@@ -65,7 +69,7 @@ function buildDependencySummary(
     : 0;
   const functionsWithResponsible = functionsByDep.filter((funcion) => funcion.responsable).length;
   const alertsByDep = alerts.filter((alert) => alertBelongsToDependency(alert, dependencia, peopleByDep, functionsByDep));
-  const expectedPeople = Math.max(Number(dependencia.personas) || 0, 1);
+  const expectedPeople = clampPeopleCount(Number(dependencia.personas) || 1);
   const peopleProgress = percent((peopleByDep.length / expectedPeople) * 100);
   const functionProgress = functionsByDep.length ? percent((functionsWithResponsible / functionsByDep.length) * 100) : 0;
   const evidenceProgress = evidenceByDep.length ? 100 : 0;
@@ -95,7 +99,8 @@ function buildDependencySummary(
     progress,
     progressLabel: progress >= 85 ? "Listo para reporte" : progress >= 55 ? "En avance" : "Requiere cargue",
     recommendation,
-    risk
+    risk,
+    expectedPeople
   };
 }
 
@@ -120,7 +125,7 @@ export function DependenciesManager() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
-      personas: Number(form.personas) || 0
+      personas: clampPeopleCount(Number(form.personas) || 1)
     });
     setForm(initialForm);
   }
@@ -156,7 +161,7 @@ export function DependenciesManager() {
                 <div className="dependency-summary-stats">
                   <article>
                     <span>Personal</span>
-                    <strong>{summary.peopleCount}</strong>
+                    <strong>{summary.peopleCount}/{summary.expectedPeople}</strong>
                   </article>
                   <article>
                     <span>Funciones</span>
@@ -223,11 +228,13 @@ export function DependenciesManager() {
             <label>
               Numero de personas
               <input
-                min="0"
+                max="30"
+                min="1"
                 type="number"
                 value={form.personas}
-                onChange={(event) => setForm({ ...form, personas: Number(event.target.value) })}
+                onChange={(event) => setForm({ ...form, personas: clampPeopleCount(Number(event.target.value)) })}
               />
+              <small className="field-help">Cada dependencia puede registrar entre 1 y 30 personas. El avance compara el personal cargado contra este cupo.</small>
             </label>
             <label>
               Criticidad

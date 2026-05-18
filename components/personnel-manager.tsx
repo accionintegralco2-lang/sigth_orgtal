@@ -47,6 +47,20 @@ const experienceOptions = ["Menos de 1 ano", "1 a 3 anos", "3 a 5 anos", "5 a 10
 const tenureOptions = ["Menos de 6 meses", "6 a 12 meses", "1 a 2 anos", "2 a 5 anos", "Mas de 5 anos"];
 const scoreOptions = [1, 2, 3, 4, 5];
 
+const functionRangeByRole: Record<string, string> = {
+  "Jefe de dependencia": "8 a 18 funciones de direccion, control y decision",
+  Coordinador: "6 a 15 funciones de coordinacion y seguimiento",
+  "Profesional universitario": "5 a 14 funciones tecnicas o profesionales",
+  "Tecnico administrativo": "4 a 12 funciones operativas y documentales",
+  "Auxiliar administrativo": "3 a 10 funciones de apoyo",
+  Analista: "5 a 14 funciones de analisis, reporte y control",
+  "Apoyo operativo": "3 a 9 funciones de soporte"
+};
+
+function getRoleFunctionGuide(role: string) {
+  return functionRangeByRole[role] ?? "El numero de funciones puede variar segun el cargo, la dependencia y el alcance real del puesto.";
+}
+
 export function PersonnelManager() {
   const { dependencias, personal, addPersona, removePersona } = useOrgData();
   const [form, setForm] = useState(initialForm);
@@ -75,6 +89,9 @@ export function PersonnelManager() {
     : 0;
   const overloadedPeople = personal.filter((item) => item.cargaLaboral >= 71).length;
   const criticalPeople = personal.filter((item) => item.cargaLaboral >= 86).length;
+  const totalFunctionsByPeople = personal.reduce((total, item) => total + item.funciones, 0);
+  const averageFunctionsByPerson = personal.length ? Math.round(totalFunctionsByPeople / personal.length) : 0;
+  const selectedRoleGuide = getRoleFunctionGuide(form.cargo);
   const averageCompetence = personal.length
     ? Math.round(
         personal.reduce(
@@ -212,6 +229,7 @@ export function PersonnelManager() {
                 value={form.funciones}
                 onChange={(event) => setForm({ ...form, funciones: Number(event.target.value) })}
               />
+              <small className="field-help">{selectedRoleGuide}</small>
             </label>
             <label>
               Complejidad
@@ -292,6 +310,31 @@ export function PersonnelManager() {
             <strong>{averageCompetence}</strong>
             <p>Promedio CT, CD y CC</p>
           </article>
+          <article>
+            <span>Funciones promedio</span>
+            <strong>{averageFunctionsByPerson}</strong>
+            <p>Variable por cargo y dependencia</p>
+          </article>
+        </section>
+
+        <section className="panel capacity-panel">
+          <div className="panel-heading">
+            <h2>Capacidad funcional por cargo</h2>
+            <span>Referencia flexible</span>
+          </div>
+          <p>
+            La app permite que cada funcionario tenga un numero distinto de
+            funciones. El valor no debe ser igual para todos: depende del cargo,
+            la dependencia y las actividades reales que ejecuta.
+          </p>
+          <div className="capacity-grid">
+            {commonRoles.map((role) => (
+              <article key={role}>
+                <strong>{role}</strong>
+                <p>{getRoleFunctionGuide(role)}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="panel">
