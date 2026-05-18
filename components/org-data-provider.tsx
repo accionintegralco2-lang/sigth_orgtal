@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
 import { alertasPiloto, dependencias, entrevistas, funciones, personal } from "@/data/mock-data";
 import { deleteDependencyRecord, fetchDependencyRecords, saveDependencyRecord } from "@/lib/dependency-repository";
 import { deleteEvidenceRecord, fetchEvidenceRecords, saveEvidenceRecord } from "@/lib/evidence-repository";
+import { deleteFunctionRecord, fetchFunctionRecords, saveFunctionRecord, saveFunctionRecords } from "@/lib/function-repository";
 import { deletePersonnelRecord, fetchPersonnelRecords, savePersonnelRecord, savePersonnelRecords } from "@/lib/personnel-repository";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import type { Alert, Dependencia, Entrevista, Evidencia, Funcion, Persona, UserRole } from "@/types";
@@ -115,6 +116,17 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudo cargar personal desde Supabase", error);
       });
 
+    fetchFunctionRecords()
+      .then((records) => {
+        if (records.length) {
+          setFunctionsState(records);
+          setWorkspaceMode("propio");
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudieron cargar funciones desde Supabase", error);
+      });
+
     fetchEvidenceRecords()
       .then((records) => {
         if (records.length) {
@@ -177,12 +189,22 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
           console.warn("No se pudo guardar la carga masiva de personal en Supabase", error);
         });
       },
-      addFuncion: (item) => setFunctionsState((current) => [{ ...item, id: makeId("fun") }, ...current]),
-      addFunciones: (items) =>
-        setFunctionsState((current) => [
-          ...items.map((item, index) => ({ ...item, id: makeId(`fun-${index}`) })),
-          ...current
-        ]),
+      addFuncion: (item) => {
+        const funcion = { ...item, id: makeId("fun") };
+        setFunctionsState((current) => [funcion, ...current]);
+        setWorkspaceMode("propio");
+        saveFunctionRecord(funcion).catch((error) => {
+          console.warn("No se pudo guardar la funcion en Supabase", error);
+        });
+      },
+      addFunciones: (items) => {
+        const nuevasFunciones = items.map((item, index) => ({ ...item, id: makeId(`fun-${index}`) }));
+        setFunctionsState((current) => [...nuevasFunciones, ...current]);
+        setWorkspaceMode("propio");
+        saveFunctionRecords(nuevasFunciones).catch((error) => {
+          console.warn("No se pudo guardar la carga masiva de funciones en Supabase", error);
+        });
+      },
       addEntrevista: (item) => setInterviewsState((current) => [{ ...item, id: makeId("ent") }, ...current]),
       addEvidencia: (item) => {
         const evidence = { ...item, id: makeId("evi") };
@@ -203,7 +225,12 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
           console.warn("No se pudo eliminar el personal en Supabase", error);
         });
       },
-      removeFuncion: (id) => setFunctionsState((current) => current.filter((item) => item.id !== id)),
+      removeFuncion: (id) => {
+        setFunctionsState((current) => current.filter((item) => item.id !== id));
+        deleteFunctionRecord(id).catch((error) => {
+          console.warn("No se pudo eliminar la funcion en Supabase", error);
+        });
+      },
       removeEntrevista: (id) => setInterviewsState((current) => current.filter((item) => item.id !== id)),
       removeEvidencia: (id) => {
         setEvidenceState((current) => current.filter((item) => item.id !== id));

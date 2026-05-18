@@ -64,18 +64,49 @@ alter table personal add column if not exists fortalezas text;
 
 create table if not exists funciones (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
+  codigo text,
   nombre text not null,
   cargo_id uuid references cargos(id) on delete set null,
   persona_id uuid references personal(id) on delete set null,
   origen text default 'manual',
   tipo text default 'asignada',
+  responsable text,
+  respaldo text,
+  proceso text,
+  producto text,
   frecuencia text,
+  criticidad integer,
+  frecuencia_valor integer,
+  complejidad_valor integer,
+  horas_semana numeric,
+  ipf numeric,
+  nivel_ipf text,
+  estado text,
+  observaciones text,
+  ranking_ipf integer,
   complejidad integer default 0,
   tiempo_estimado integer default 0,
   impacto integer default 0,
   riesgo text default 'moderado',
   created_at timestamptz default now()
 );
+
+alter table funciones add column if not exists client_id text unique;
+alter table funciones add column if not exists codigo text;
+alter table funciones add column if not exists responsable text;
+alter table funciones add column if not exists respaldo text;
+alter table funciones add column if not exists proceso text;
+alter table funciones add column if not exists producto text;
+alter table funciones add column if not exists criticidad integer;
+alter table funciones add column if not exists frecuencia_valor integer;
+alter table funciones add column if not exists complejidad_valor integer;
+alter table funciones add column if not exists horas_semana numeric;
+alter table funciones add column if not exists ipf numeric;
+alter table funciones add column if not exists nivel_ipf text;
+alter table funciones add column if not exists estado text;
+alter table funciones add column if not exists observaciones text;
+alter table funciones add column if not exists ranking_ipf integer;
 
 create table if not exists competencias (
   id uuid primary key default gen_random_uuid(),
@@ -186,6 +217,7 @@ on conflict (id) do nothing;
 
 alter table dependencias enable row level security;
 alter table personal enable row level security;
+alter table funciones enable row level security;
 alter table evidencias enable row level security;
 
 do $$
@@ -209,6 +241,51 @@ begin
   ) then
     create policy "Lectura publica de personal"
     on personal for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'funciones'
+      and policyname = 'Lectura publica de funciones'
+  ) then
+    create policy "Lectura publica de funciones"
+    on funciones for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'funciones'
+      and policyname = 'Registro publico de funciones'
+  ) then
+    create policy "Registro publico de funciones"
+    on funciones for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'funciones'
+      and policyname = 'Actualizacion publica de funciones'
+  ) then
+    create policy "Actualizacion publica de funciones"
+    on funciones for update
+    using (true)
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'funciones'
+      and policyname = 'Eliminacion publica de funciones'
+  ) then
+    create policy "Eliminacion publica de funciones"
+    on funciones for delete
     using (true);
   end if;
 
