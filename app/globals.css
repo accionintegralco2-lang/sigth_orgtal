@@ -998,6 +998,173 @@ button {
   background: rgba(31, 77, 67, 0.08);
 }
 
+.sustentation-hero {
+  min-height: 340px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: end;
+  padding: 36px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(14, 39, 34, 0.94), rgba(31, 77, 67, 0.88)),
+    url("/icon.svg") right 36px center / 220px 220px no-repeat;
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.sustentation-hero span,
+.sustentation-hero small {
+  color: #f0d89a;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sustentation-hero h1 {
+  max-width: 760px;
+  margin: 10px 0;
+  font-size: clamp(38px, 6vw, 72px);
+  line-height: 0.95;
+}
+
+.sustentation-hero p {
+  max-width: 700px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.sustentation-hero aside {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid rgba(240, 216, 154, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sustentation-hero aside strong {
+  color: #fff;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.sustentation-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.sustentation-metrics article {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.sustentation-metrics span {
+  color: var(--gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sustentation-metrics strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--brand);
+  font-size: 38px;
+}
+
+.sustentation-metrics p,
+.sustention-proof li,
+.sustention-route a p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.sustention-proof ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.sustention-risk-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.sustention-risk-card dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.sustention-risk-card dt {
+  color: var(--muted);
+}
+
+.sustention-risk-card dd {
+  margin: 0;
+  color: var(--brand);
+  font-weight: 900;
+}
+
+.sustention-risk-score {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  border-radius: 8px;
+  background: rgba(31, 77, 67, 0.09);
+}
+
+.sustention-risk-score strong {
+  color: var(--brand);
+  font-size: 34px;
+  text-transform: capitalize;
+}
+
+.sustention-risk-score span {
+  color: var(--muted);
+}
+
+.sustention-route-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sustention-route-grid a {
+  min-height: 120px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 16px;
+  border: 1px solid rgba(31, 77, 67, 0.18);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: inherit;
+  text-decoration: none;
+}
+
+.sustention-route-grid a:hover {
+  border-color: var(--brand);
+  background: rgba(31, 77, 67, 0.08);
+}
+
+.sustention-route-grid a strong {
+  color: var(--brand);
+}
+
 .panel {
   padding: 22px;
   border-top: 4px solid rgba(31, 77, 67, 0.22);
@@ -3584,6 +3751,9 @@ td {
   .signature-grid,
   .survey-grid,
   .supabase-status-grid,
+  .sustentation-hero,
+  .sustentation-metrics,
+  .sustention-route-grid,
   .table-toolbar,
   .template-option-grid,
   .trace-grid,

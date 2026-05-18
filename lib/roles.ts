@@ -17,6 +17,7 @@ export type NavItem = {
 export const allNavItems: NavItem[] = [
   { label: "Asistente", href: "/asistente-diagnostico" },
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Sustentacion", href: "/sustentacion" },
   { label: "Dependencias", href: "/dependencias" },
   { label: "Personal", href: "/personal" },
   { label: "Funciones", href: "/funciones" },
@@ -41,7 +42,7 @@ const navByHref = new Map(allNavItems.map((item) => [item.href, item]));
 
 export const roleNavigation: Record<UserRole, string[]> = {
   Administrador: allNavItems.map((item) => item.href),
-  Director: ["/dashboard", "/dependencias", "/matriz-funcion-persona", "/alertas", "/reportes"],
+  Director: ["/dashboard", "/sustentacion", "/dependencias", "/matriz-funcion-persona", "/alertas", "/reportes"],
   "Jefe de dependencia": ["/dependencias", "/funciones", "/matriz-funcion-persona", "/evidencias", "/alertas", "/reportes"],
   "Analista TH": ["/configuracion", "/personal", "/funciones", "/cargas-laborales", "/alertas", "/calidad-datos", "/evidencias"],
   "Experto validador": ["/encuesta/expertos", "/juicio-expertos", "/validacion"],
