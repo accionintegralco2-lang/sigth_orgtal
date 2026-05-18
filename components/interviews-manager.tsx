@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData } from "@/components/org-data-provider";
+import { fetchSurveySubmissions, saveSurveySubmission } from "@/lib/interview-repository";
 import {
   expertRespondents,
   expertSurveyQuestions,
@@ -75,6 +76,15 @@ export function InterviewsManager() {
     if (stored) {
       setSubmissions(JSON.parse(stored) as SurveySubmission[]);
     }
+    fetchSurveySubmissions()
+      .then((records) => {
+        if (records.length) {
+          setSubmissions(records);
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudieron cargar respuestas de encuesta desde Supabase", error);
+      });
     setIsSurveyReady(true);
   }, []);
 
@@ -104,18 +114,19 @@ export function InterviewsManager() {
     event.preventDefault();
     const resolvedRespondent = respondent.trim() || (surveyTarget === "Personal" ? personal[0]?.codigo || "Personal" : "Experto");
     const average = Number((answers.reduce((total, value) => total + value, 0) / answers.length).toFixed(1));
-    setSubmissions((current) => [
-      {
-        id: `survey-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        target: surveyTarget,
-        respondent: resolvedRespondent,
-        average,
-        answers,
-        createdAt: new Date().toLocaleDateString("es-CO"),
-        interpretation: interpretAverage(average)
-      },
-      ...current
-    ]);
+    const submission = {
+      id: `survey-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      target: surveyTarget,
+      respondent: resolvedRespondent,
+      average,
+      answers,
+      createdAt: new Date().toLocaleDateString("es-CO"),
+      interpretation: interpretAverage(average)
+    };
+    setSubmissions((current) => [submission, ...current]);
+    saveSurveySubmission(submission).catch((error) => {
+      console.warn("No se pudo guardar la respuesta de encuesta en Supabase", error);
+    });
     setAnswers(activeSurveyQuestions.map(() => 3));
     setRespondent("");
   }

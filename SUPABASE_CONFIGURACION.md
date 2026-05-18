@@ -59,4 +59,4 @@ Luego:
 
 ## Estado actual
 
-Los primeros modulos conectados a Supabase son Dependencias, Personal, Funciones y Evidencias. Los demas modulos siguen funcionando con datos piloto/locales y se pueden conectar uno por uno para evitar que el sistema se atasque.
+Los primeros modulos conectados a Supabase son Dependencias, Personal, Funciones, Entrevistas, Encuestas y Evidencias. Los demas modulos siguen funcionando con datos piloto/locales y se pueden conectar uno por uno para evitar que el sistema se atasque.

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useOrgData } from "@/components/org-data-provider";
+import { saveSurveySubmission } from "@/lib/interview-repository";
 import {
   expertRespondents,
   getSurveyQuestions,
@@ -40,6 +41,9 @@ export function PublicSurveyView({ target }: { target: SurveyTarget }) {
       interpretation: interpretAverage(average)
     };
     window.localStorage.setItem(surveyStorageKey, JSON.stringify([submission, ...current]));
+    saveSurveySubmission(submission).catch((error) => {
+      console.warn("No se pudo guardar la respuesta publica en Supabase", error);
+    });
     setSaved(true);
   }
 

@@ -5,6 +5,7 @@ import { alertasPiloto, dependencias, entrevistas, funciones, personal } from "@
 import { deleteDependencyRecord, fetchDependencyRecords, saveDependencyRecord } from "@/lib/dependency-repository";
 import { deleteEvidenceRecord, fetchEvidenceRecords, saveEvidenceRecord } from "@/lib/evidence-repository";
 import { deleteFunctionRecord, fetchFunctionRecords, saveFunctionRecord, saveFunctionRecords } from "@/lib/function-repository";
+import { deleteInterviewRecord, fetchInterviewRecords, saveInterviewRecord } from "@/lib/interview-repository";
 import { deletePersonnelRecord, fetchPersonnelRecords, savePersonnelRecord, savePersonnelRecords } from "@/lib/personnel-repository";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import type { Alert, Dependencia, Entrevista, Evidencia, Funcion, Persona, UserRole } from "@/types";
@@ -127,6 +128,17 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudieron cargar funciones desde Supabase", error);
       });
 
+    fetchInterviewRecords()
+      .then((records) => {
+        if (records.length) {
+          setInterviewsState(records);
+          setWorkspaceMode("propio");
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudieron cargar entrevistas desde Supabase", error);
+      });
+
     fetchEvidenceRecords()
       .then((records) => {
         if (records.length) {
@@ -205,7 +217,14 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
           console.warn("No se pudo guardar la carga masiva de funciones en Supabase", error);
         });
       },
-      addEntrevista: (item) => setInterviewsState((current) => [{ ...item, id: makeId("ent") }, ...current]),
+      addEntrevista: (item) => {
+        const entrevista = { ...item, id: makeId("ent") };
+        setInterviewsState((current) => [entrevista, ...current]);
+        setWorkspaceMode("propio");
+        saveInterviewRecord(entrevista).catch((error) => {
+          console.warn("No se pudo guardar la entrevista en Supabase", error);
+        });
+      },
       addEvidencia: (item) => {
         const evidence = { ...item, id: makeId("evi") };
         setEvidenceState((current) => [evidence, ...current]);
@@ -231,7 +250,12 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
           console.warn("No se pudo eliminar la funcion en Supabase", error);
         });
       },
-      removeEntrevista: (id) => setInterviewsState((current) => current.filter((item) => item.id !== id)),
+      removeEntrevista: (id) => {
+        setInterviewsState((current) => current.filter((item) => item.id !== id));
+        deleteInterviewRecord(id).catch((error) => {
+          console.warn("No se pudo eliminar la entrevista en Supabase", error);
+        });
+      },
       removeEvidencia: (id) => {
         setEvidenceState((current) => current.filter((item) => item.id !== id));
         deleteEvidenceRecord(id).catch((error) => {

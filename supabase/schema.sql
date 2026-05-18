@@ -120,11 +120,20 @@ create table if not exists competencias (
 
 create table if not exists entrevistas (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
   nombre text not null,
   dirigido_a text,
+  respuestas integer default 0,
   estado text default 'pendiente',
+  impacto text default 'Medio',
+  objetivo text,
   created_at timestamptz default now()
 );
+
+alter table entrevistas add column if not exists client_id text unique;
+alter table entrevistas add column if not exists respuestas integer default 0;
+alter table entrevistas add column if not exists impacto text default 'Medio';
+alter table entrevistas add column if not exists objetivo text;
 
 create table if not exists preguntas (
   id uuid primary key default gen_random_uuid(),
@@ -141,6 +150,26 @@ create table if not exists respuestas (
   respuesta text,
   created_at timestamptz default now()
 );
+
+create table if not exists encuesta_respuestas (
+  id uuid primary key default gen_random_uuid(),
+  client_id text unique,
+  target text default 'Personal',
+  respondent text,
+  average numeric default 0,
+  answers jsonb default '[]',
+  created_at_label text,
+  interpretation text,
+  created_at timestamptz default now()
+);
+
+alter table encuesta_respuestas add column if not exists client_id text unique;
+alter table encuesta_respuestas add column if not exists target text default 'Personal';
+alter table encuesta_respuestas add column if not exists respondent text;
+alter table encuesta_respuestas add column if not exists average numeric default 0;
+alter table encuesta_respuestas add column if not exists answers jsonb default '[]';
+alter table encuesta_respuestas add column if not exists created_at_label text;
+alter table encuesta_respuestas add column if not exists interpretation text;
 
 create table if not exists alertas (
   id uuid primary key default gen_random_uuid(),
@@ -218,6 +247,8 @@ on conflict (id) do nothing;
 alter table dependencias enable row level security;
 alter table personal enable row level security;
 alter table funciones enable row level security;
+alter table entrevistas enable row level security;
+alter table encuesta_respuestas enable row level security;
 alter table evidencias enable row level security;
 
 do $$
@@ -253,6 +284,85 @@ begin
     create policy "Lectura publica de funciones"
     on funciones for select
     using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'entrevistas'
+      and policyname = 'Lectura publica de entrevistas'
+  ) then
+    create policy "Lectura publica de entrevistas"
+    on entrevistas for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'entrevistas'
+      and policyname = 'Registro publico de entrevistas'
+  ) then
+    create policy "Registro publico de entrevistas"
+    on entrevistas for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'entrevistas'
+      and policyname = 'Actualizacion publica de entrevistas'
+  ) then
+    create policy "Actualizacion publica de entrevistas"
+    on entrevistas for update
+    using (true)
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'entrevistas'
+      and policyname = 'Eliminacion publica de entrevistas'
+  ) then
+    create policy "Eliminacion publica de entrevistas"
+    on entrevistas for delete
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'encuesta_respuestas'
+      and policyname = 'Lectura publica de respuestas de encuesta'
+  ) then
+    create policy "Lectura publica de respuestas de encuesta"
+    on encuesta_respuestas for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'encuesta_respuestas'
+      and policyname = 'Registro publico de respuestas de encuesta'
+  ) then
+    create policy "Registro publico de respuestas de encuesta"
+    on encuesta_respuestas for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'encuesta_respuestas'
+      and policyname = 'Actualizacion publica de respuestas de encuesta'
+  ) then
+    create policy "Actualizacion publica de respuestas de encuesta"
+    on encuesta_respuestas for update
+    using (true)
+    with check (true);
   end if;
 
   if not exists (
