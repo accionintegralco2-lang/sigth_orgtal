@@ -4,7 +4,7 @@ import { OrgDataProvider } from "@/components/org-data-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sigth-orgtal-ll1g.vercel.app"),
+  metadataBase: new URL("https://sigth-orgtal.vercel.app"),
   title: {
     default: "SIGTH_ORGTAL",
     template: "%s | SIGTH_ORGTAL"

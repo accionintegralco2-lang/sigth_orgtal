@@ -46,7 +46,7 @@ Despues hacer redeploy.
 Abrir la app publica:
 
 ```bash
-https://sigth-orgtal-ll1g.vercel.app
+https://sigth-orgtal.vercel.app
 ```
 
 Luego:

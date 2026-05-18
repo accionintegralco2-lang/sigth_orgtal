@@ -60,6 +60,18 @@ En Vercel:
 
 Luego agregar las variables de entorno de `.env.production.example`.
 
+## Proyecto Vercel recomendado
+
+Si aparecen dos despliegues desde el mismo repositorio, usar como principal:
+
+```bash
+https://sigth-orgtal.vercel.app
+```
+
+El proyecto `sigth-orgtal-ll1g` puede quedar como despliegue anterior o eliminarse
+desde Vercel cuando confirmes que `sigth-orgtal` tiene las variables de Supabase
+y pasa la prueba integral.
+
 ## Paso a paso simple
 
 1. Entrar a GitHub y crear un repositorio llamado `sigth_orgtal`.
