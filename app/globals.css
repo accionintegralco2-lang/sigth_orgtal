@@ -2846,6 +2846,54 @@ td {
   border-color: rgba(38, 115, 77, 0.28);
 }
 
+.install-panel {
+  border-color: rgba(31, 77, 67, 0.18);
+  background:
+    linear-gradient(135deg, rgba(31, 77, 67, 0.08), rgba(255, 255, 255, 0.94) 46%),
+    var(--surface);
+}
+
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.install-card {
+  min-height: 132px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.install-card.ready {
+  border-color: rgba(38, 115, 77, 0.24);
+  background: rgba(38, 115, 77, 0.08);
+}
+
+.install-card span {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.install-card strong {
+  color: var(--brand);
+  font-size: 22px;
+}
+
+.install-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .readiness-meter {
   display: grid;
   gap: 8px;
@@ -3340,6 +3388,7 @@ td {
   .filter-panel,
   .function-summary-grid,
   .institutional-banner,
+  .install-grid,
   .matrix-legend,
   .metric-grid,
   .record-form,

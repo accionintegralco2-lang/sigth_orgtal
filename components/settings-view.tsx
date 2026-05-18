@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData, type WorkspaceBackup } from "@/components/org-data-provider";
 import { buildDataQualitySummary } from "@/lib/data-quality";
@@ -40,6 +40,10 @@ type BulkPreview =
       items: Array<Omit<Funcion, "id">>;
       issues: BulkIssue[];
     };
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
 
 export function SettingsView() {
   const {
@@ -63,6 +67,8 @@ export function SettingsView() {
   const [bulkPreview, setBulkPreview] = useState<BulkPreview | null>(null);
   const [supabaseTestMessage, setSupabaseTestMessage] = useState("");
   const [isTestingSupabase, setIsTestingSupabase] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
+  const [installMessage, setInstallMessage] = useState("");
   const bulkErrors = bulkPreview?.issues.filter((issue) => issue.type === "error") ?? [];
   const bulkWarnings = bulkPreview?.issues.filter((issue) => issue.type === "warning") ?? [];
   const qualitySummary = buildDataQualitySummary({
@@ -121,6 +127,27 @@ export function SettingsView() {
   ];
   const productionReadyCount = productionChecks.filter((item) => item.ready).length;
   const productionScore = Math.round((productionReadyCount / productionChecks.length) * 100);
+
+  useEffect(() => {
+    function captureInstallPrompt(event: Event) {
+      event.preventDefault();
+      setInstallPrompt(event as InstallPromptEvent);
+      setInstallMessage("La app esta lista para instalarse en este dispositivo.");
+    }
+
+    function markInstalled() {
+      setInstallPrompt(null);
+      setInstallMessage("SIGTH_ORGTAL ya quedo instalada en este dispositivo.");
+    }
+
+    window.addEventListener("beforeinstallprompt", captureInstallPrompt);
+    window.addEventListener("appinstalled", markInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", captureInstallPrompt);
+      window.removeEventListener("appinstalled", markInstalled);
+    };
+  }, []);
 
   function submitNewDiagnosis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -378,6 +405,24 @@ export function SettingsView() {
     setIsTestingSupabase(false);
   }
 
+  async function installApp() {
+    if (!installPrompt) {
+      setInstallMessage(
+        "Si el boton no aparece disponible, usa el menu del navegador y selecciona Instalar app o Agregar a pantalla de inicio."
+      );
+      return;
+    }
+
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    setInstallPrompt(null);
+    setInstallMessage(
+      choice.outcome === "accepted"
+        ? "Instalacion aceptada. SIGTH_ORGTAL quedara disponible como app en el dispositivo."
+        : "Instalacion cancelada. Puedes intentarlo nuevamente desde el menu del navegador."
+    );
+  }
+
   return (
     <AppShell>
       <main className="page-stack">
@@ -462,6 +507,40 @@ export function SettingsView() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="panel setup-panel install-panel">
+          <div className="panel-heading">
+            <h2>Instalar aplicacion</h2>
+            <span>PWA web</span>
+          </div>
+          <p>
+            SIGTH_ORGTAL ya esta preparada para instalarse desde la URL publica
+            en computadores y celulares compatibles, sin depender todavia de Play Store.
+          </p>
+          <div className="install-grid">
+            <article className="install-card ready">
+              <span>Estado</span>
+              <strong>Instalable</strong>
+              <p>Incluye manifiesto, icono institucional e inicio en dashboard.</p>
+            </article>
+            <article className="install-card">
+              <span>Jueces</span>
+              <strong>Acceso directo</strong>
+              <p>Permite mostrar la app como producto web funcional durante la sustentacion.</p>
+            </article>
+            <article className="install-card">
+              <span>Play Store</span>
+              <strong>Siguiente fase</strong>
+              <p>Despues de validar Supabase y roles se puede empaquetar como Android.</p>
+            </article>
+          </div>
+          <div className="action-row">
+            <button className="primary-action" type="button" onClick={installApp}>
+              Instalar SIGTH_ORGTAL
+            </button>
+          </div>
+          {installMessage ? <p className="import-message">{installMessage}</p> : null}
         </section>
 
         <section className="dashboard-grid">
