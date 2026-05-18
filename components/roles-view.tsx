@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData } from "@/components/org-data-provider";
-import { getNavigationForRole, roleHome, rolePermissions, userRoles } from "@/lib/roles";
+import { getNavigationForRole, roleHome, roleMission, rolePermissions, roleWorkflow, userRoles } from "@/lib/roles";
 
 export function RolesView() {
   const { activeRole, setActiveRole } = useOrgData();
@@ -29,7 +29,19 @@ export function RolesView() {
               <div>
                 <span>Perfil</span>
                 <h2>{role}</h2>
-                <p>Inicio sugerido: {roleHome[role]}</p>
+                <p>{roleMission[role]}</p>
+              </div>
+              <div className="role-home-strip">
+                <span>Inicio recomendado</span>
+                <strong>{roleHome[role]}</strong>
+              </div>
+              <div className="role-workflow">
+                {roleWorkflow[role].map((step, index) => (
+                  <span key={step}>
+                    <b>{index + 1}</b>
+                    {step}
+                  </span>
+                ))}
               </div>
               <div className="role-route-list">
                 {getNavigationForRole(role).map((item) => (

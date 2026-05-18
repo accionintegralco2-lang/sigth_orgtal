@@ -99,3 +99,21 @@ export const roleHome: Record<UserRole, string> = {
   "Experto validador": "/encuesta/expertos",
   Personal: "/encuesta/personal"
 };
+
+export const roleMission: Record<UserRole, string> = {
+  Administrador: "Configura el diagnostico, administra datos y prepara la operacion general del sistema.",
+  Director: "Consulta el estado institucional, revisa riesgos y toma decisiones con reportes ejecutivos.",
+  "Jefe de dependencia": "Valida funciones reales, soportes, responsables y alertas de su dependencia.",
+  "Analista TH": "Carga personal, funciones, evidencias y corrige datos criticos del diagnostico.",
+  "Experto validador": "Diligencia rubricas, revisa criterios y aporta validacion metodologica.",
+  Personal: "Diligencia su encuesta funcional y valida informacion de funciones asignadas o reales."
+};
+
+export const roleWorkflow: Record<UserRole, string[]> = {
+  Administrador: ["Crear diagnostico", "Cargar datos", "Revisar calidad", "Publicar reporte"],
+  Director: ["Ver dashboard", "Revisar alertas", "Analizar matriz", "Aprobar reporte"],
+  "Jefe de dependencia": ["Revisar dependencia", "Validar funciones", "Agregar evidencias", "Cerrar alertas"],
+  "Analista TH": ["Cargar personal", "Cargar funciones", "Revisar cargas", "Corregir datos"],
+  "Experto validador": ["Abrir rubrica", "Valorar criterios", "Revisar juicio", "Emitir recomendacion"],
+  Personal: ["Abrir encuesta", "Identificarse", "Responder escala", "Enviar validacion"]
+};

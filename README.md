@@ -22,6 +22,17 @@ SIGTH_ORGTAL se presenta como una propuesta de innovacion tecnologica aplicada a
 - Alertas
 - Reportes
 
+## Uso por roles
+
+La app incluye modo usuario simple para orientar la navegacion:
+
+- Administrador: configuracion, carga de datos y control general.
+- Director: dashboard, alertas, matriz y reportes.
+- Jefe de dependencia: dependencia, funciones, evidencias y alertas.
+- Analista TH: personal, funciones, cargas, calidad de datos y evidencias.
+- Experto validador: rubrica, juicio de expertos y validacion.
+- Personal: encuesta funcional y matriz de funciones.
+
 ## Instalacion
 
 ```bash

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { useOrgData } from "@/components/org-data-provider";
 import { buildDiagnosisProgress } from "@/lib/diagnosis-progress";
-import { getNavigationForRole, userRoles } from "@/lib/roles";
+import { getNavigationForRole, roleHome, roleMission, userRoles } from "@/lib/roles";
 import type { UserRole } from "@/types";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -45,10 +45,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div>
             <p className="eyebrow">Version minima funcional</p>
             <strong>Diagnostico organizacional institucional</strong>
+            <small className="topbar-role-mission">{roleMission[activeRole]}</small>
           </div>
           <div className="topbar-status">
             <span className="status-dot" />
             <span className="status-pill">{isConfig ? "Gestion de datos" : "Datos activos"}</span>
+            <Link className="topbar-home-link" href={roleHome[activeRole]}>
+              Mi inicio
+            </Link>
             <Link className="topbar-progress" href="/asistente-diagnostico">
               <span>Avance</span>
               <strong>{progress.overall}%</strong>
