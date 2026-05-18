@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData } from "@/components/org-data-provider";
 import { RiskBadge } from "@/components/risk-badge";
+import { fetchAlertTraceRecords, saveAlertTraceRecord, type AlertTraceRecord } from "@/lib/alert-trace-repository";
 import { getAlerts } from "@/lib/calculations";
 import type { RiskLevel } from "@/types";
 
@@ -15,13 +16,7 @@ const filters: Array<{ label: string; value: RiskLevel | "todas" }> = [
   { label: "Controladas", value: "bajo" }
 ];
 
-type AlertTrace = {
-  estadoSeguimiento: "Abierta" | "En revision" | "Cerrada";
-  responsableSeguimiento: string;
-  fechaSeguimiento: string;
-  evidencia: string;
-  accionTomada: string;
-};
+type AlertTrace = AlertTraceRecord;
 
 const traceStorageKey = "orgtalsigth-alert-trace-v1";
 
@@ -80,6 +75,15 @@ export function AlertsView() {
     if (stored) {
       setTraces(JSON.parse(stored) as Record<string, AlertTrace>);
     }
+    fetchAlertTraceRecords()
+      .then((records) => {
+        if (Object.keys(records).length) {
+          setTraces(records);
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudo cargar trazabilidad de alertas desde Supabase", error);
+      });
     setIsReady(true);
   }, []);
 
@@ -89,14 +93,18 @@ export function AlertsView() {
   }, [isReady, traces]);
 
   function updateTrace(alertId: string, patch: Partial<AlertTrace>) {
+    const nextTrace = {
+      ...emptyTrace(),
+      ...traces[alertId],
+      ...patch
+    };
     setTraces((current) => ({
       ...current,
-      [alertId]: {
-        ...emptyTrace(),
-        ...current[alertId],
-        ...patch
-      }
+      [alertId]: nextTrace
     }));
+    saveAlertTraceRecord(alertId, nextTrace).catch((error) => {
+      console.warn("No se pudo guardar trazabilidad de alerta en Supabase", error);
+    });
   }
 
   function exportTrace() {

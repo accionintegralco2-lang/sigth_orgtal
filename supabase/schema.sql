@@ -221,6 +221,7 @@ create table if not exists usuarios (
 create table if not exists alertas_trazabilidad (
   id uuid primary key default gen_random_uuid(),
   alerta_id uuid references alertas(id) on delete cascade,
+  alerta_client_id text unique,
   estado text default 'Abierta',
   responsable text,
   fecha_seguimiento date,
@@ -228,6 +229,8 @@ create table if not exists alertas_trazabilidad (
   accion_tomada text,
   created_at timestamptz default now()
 );
+
+alter table alertas_trazabilidad add column if not exists alerta_client_id text unique;
 
 create table if not exists encuestas_respuestas (
   id uuid primary key default gen_random_uuid(),
@@ -249,6 +252,7 @@ alter table personal enable row level security;
 alter table funciones enable row level security;
 alter table entrevistas enable row level security;
 alter table encuesta_respuestas enable row level security;
+alter table alertas_trazabilidad enable row level security;
 alter table evidencias enable row level security;
 
 do $$
@@ -350,6 +354,40 @@ begin
   ) then
     create policy "Registro publico de respuestas de encuesta"
     on encuesta_respuestas for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'alertas_trazabilidad'
+      and policyname = 'Lectura publica de trazabilidad de alertas'
+  ) then
+    create policy "Lectura publica de trazabilidad de alertas"
+    on alertas_trazabilidad for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'alertas_trazabilidad'
+      and policyname = 'Registro publico de trazabilidad de alertas'
+  ) then
+    create policy "Registro publico de trazabilidad de alertas"
+    on alertas_trazabilidad for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'alertas_trazabilidad'
+      and policyname = 'Actualizacion publica de trazabilidad de alertas'
+  ) then
+    create policy "Actualizacion publica de trazabilidad de alertas"
+    on alertas_trazabilidad for update
+    using (true)
     with check (true);
   end if;
 

@@ -103,7 +103,7 @@ Para la demostracion ante jueces, se puede publicar primero sin Supabase y usar 
 
 ## Activar evidencias reales
 
-La primera conexion real con Supabase queda aplicada a los modulos de dependencias, personal, funciones, entrevistas, encuestas y evidencias. Cuando las variables de Supabase esten configuradas, las dependencias nuevas, los funcionarios, las funciones, los instrumentos, las respuestas externas y los registros de evidencias se guardan en la base de datos. Si Supabase todavia no esta conectado, la app sigue funcionando con datos locales para la demostracion.
+La primera conexion real con Supabase queda aplicada a los modulos de dependencias, personal, funciones, entrevistas, encuestas, alertas y evidencias. Cuando las variables de Supabase esten configuradas, las dependencias nuevas, los funcionarios, las funciones, los instrumentos, las respuestas externas, la trazabilidad de alertas y los registros de evidencias se guardan en la base de datos. Si Supabase todavia no esta conectado, la app sigue funcionando con datos locales para la demostracion.
 
 Pasos:
 
