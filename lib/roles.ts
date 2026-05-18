@@ -15,6 +15,7 @@ export type NavItem = {
 };
 
 export const allNavItems: NavItem[] = [
+  { label: "Inicio", href: "/" },
   { label: "Asistente", href: "/asistente-diagnostico" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "Sustentacion", href: "/sustentacion" },
@@ -42,11 +43,11 @@ const navByHref = new Map(allNavItems.map((item) => [item.href, item]));
 
 export const roleNavigation: Record<UserRole, string[]> = {
   Administrador: allNavItems.map((item) => item.href),
-  Director: ["/dashboard", "/sustentacion", "/dependencias", "/matriz-funcion-persona", "/alertas", "/reportes"],
-  "Jefe de dependencia": ["/dependencias", "/funciones", "/matriz-funcion-persona", "/evidencias", "/alertas", "/reportes"],
-  "Analista TH": ["/configuracion", "/personal", "/funciones", "/cargas-laborales", "/alertas", "/calidad-datos", "/evidencias"],
-  "Experto validador": ["/encuesta/expertos", "/juicio-expertos", "/validacion"],
-  Personal: ["/encuesta/personal", "/matriz-funcion-persona"]
+  Director: ["/", "/dashboard", "/sustentacion", "/dependencias", "/matriz-funcion-persona", "/alertas", "/reportes"],
+  "Jefe de dependencia": ["/", "/dependencias", "/funciones", "/matriz-funcion-persona", "/evidencias", "/alertas", "/reportes"],
+  "Analista TH": ["/", "/configuracion", "/personal", "/funciones", "/cargas-laborales", "/alertas", "/calidad-datos", "/evidencias"],
+  "Experto validador": ["/", "/encuesta/expertos", "/juicio-expertos", "/validacion"],
+  Personal: ["/", "/encuesta/personal", "/matriz-funcion-persona"]
 };
 
 export function getNavigationForRole(role: UserRole) {
