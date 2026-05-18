@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData } from "@/components/org-data-provider";
 import { RiskBadge } from "@/components/risk-badge";
 import { getAlerts, getDashboardMetrics } from "@/lib/calculations";
 import { buildDataQualitySummary } from "@/lib/data-quality";
 import { buildExecutiveFindings, buildImprovementPlan, buildReportDate } from "@/lib/report-builder";
+import { fetchReportRecords, saveReportRecord, type ReportHistoryItem } from "@/lib/report-repository";
+
+const reportHistoryStorageKey = "sigth-orgtal-report-history-v1";
 
 function csvValue(value: string | number) {
   return `"${String(value).replaceAll('"', '""')}"`;
@@ -24,6 +28,8 @@ function downloadFile(filename: string, content: string, type: string) {
 
 export function ReportsView() {
   const data = useOrgData();
+  const [history, setHistory] = useState<ReportHistoryItem[]>([]);
+  const [historyMessage, setHistoryMessage] = useState("");
   const metrics = getDashboardMetrics(data);
   const alerts = getAlerts(data);
   const findings = buildExecutiveFindings(data);
@@ -32,6 +38,26 @@ export function ReportsView() {
   const reportReady = quality.criticalIssues === 0;
   const criticalIssues = quality.issues.filter((issue) => issue.severidad === "critico");
   const reportDate = buildReportDate(new Date("2026-05-17T12:00:00-05:00"));
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(reportHistoryStorageKey);
+    if (stored) {
+      setHistory(JSON.parse(stored) as ReportHistoryItem[]);
+    }
+    fetchReportRecords()
+      .then((records) => {
+        if (records.length) {
+          setHistory(records);
+        }
+      })
+      .catch((error) => {
+        console.warn("No se pudo cargar historial de reportes desde Supabase", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(reportHistoryStorageKey, JSON.stringify(history));
+  }, [history]);
 
   function exportAlerts() {
     const filenameDate = new Date().toISOString().slice(0, 10);
@@ -59,6 +85,28 @@ export function ReportsView() {
     downloadFile(`sigth_orgtal-plan-mejora-${filenameDate}.csv`, csv, "text/csv;charset=utf-8");
   }
 
+  function saveReportHistory() {
+    const item: ReportHistoryItem = {
+      id: `rep-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      nombre: "Informe ejecutivo de diagnostico organizacional",
+      tipo: "Ejecutivo",
+      fecha: reportDate,
+      estado: reportReady ? "Listo para imprimir" : "Pendiente por datos criticos",
+      calidad: quality.score,
+      riesgo: metrics.riesgoGeneral,
+      dependencias: data.dependencias.length,
+      personal: data.personal.length,
+      funciones: data.funciones.length,
+      alertas: alerts.length
+    };
+    setHistory((current) => [item, ...current].slice(0, 8));
+    setHistoryMessage("Reporte guardado en el historial.");
+    saveReportRecord(item).catch((error) => {
+      console.warn("No se pudo guardar el reporte en Supabase", error);
+      setHistoryMessage("Reporte guardado localmente. Supabase no confirmo el guardado.");
+    });
+  }
+
   return (
     <AppShell>
       <main className="page-stack report-page">
@@ -77,6 +125,9 @@ export function ReportsView() {
             </button>
             <button className="secondary-action" type="button" onClick={exportPlan}>
               Descargar plan CSV
+            </button>
+            <button className="secondary-action" type="button" onClick={saveReportHistory}>
+              Guardar historial
             </button>
             <button className="primary-action" disabled={!reportReady} type="button" onClick={() => window.print()}>
               {reportReady ? "Imprimir o guardar PDF" : "Corregir antes de imprimir"}
@@ -117,6 +168,50 @@ export function ReportsView() {
               ))}
             </ul>
           ) : null}
+        </section>
+
+        <section className="panel no-print">
+          <div className="panel-heading">
+            <h2>Historial de reportes</h2>
+            <span>{history.length} registros</span>
+          </div>
+          {historyMessage ? <p className="import-message">{historyMessage}</p> : null}
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reporte</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Calidad</th>
+                  <th>Riesgo</th>
+                  <th>Datos</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.length ? (
+                  history.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.nombre}</td>
+                      <td>{item.fecha}</td>
+                      <td>{item.estado}</td>
+                      <td>{item.calidad}%</td>
+                      <td>
+                        <RiskBadge level={item.riesgo as typeof metrics.riesgoGeneral} compact />
+                      </td>
+                      <td>
+                        {item.dependencias} dep. / {item.personal} pers. / {item.funciones} fun. / {item.alertas} alertas
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6}>Aun no hay reportes guardados en el historial.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section className="report-document">

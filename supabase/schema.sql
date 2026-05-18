@@ -183,11 +183,30 @@ create table if not exists alertas (
 
 create table if not exists reportes (
   id uuid primary key default gen_random_uuid(),
+  client_id text unique,
   nombre text not null,
   tipo text default 'PDF',
+  fecha_label text,
+  estado text default 'Generado',
+  calidad integer default 0,
+  riesgo text default 'moderado',
+  dependencias integer default 0,
+  personal integer default 0,
+  funciones integer default 0,
+  alertas integer default 0,
   contenido jsonb default '{}',
   created_at timestamptz default now()
 );
+
+alter table reportes add column if not exists client_id text unique;
+alter table reportes add column if not exists fecha_label text;
+alter table reportes add column if not exists estado text default 'Generado';
+alter table reportes add column if not exists calidad integer default 0;
+alter table reportes add column if not exists riesgo text default 'moderado';
+alter table reportes add column if not exists dependencias integer default 0;
+alter table reportes add column if not exists personal integer default 0;
+alter table reportes add column if not exists funciones integer default 0;
+alter table reportes add column if not exists alertas integer default 0;
 
 create table if not exists evidencias (
   id uuid primary key default gen_random_uuid(),
@@ -253,6 +272,7 @@ alter table funciones enable row level security;
 alter table entrevistas enable row level security;
 alter table encuesta_respuestas enable row level security;
 alter table alertas_trazabilidad enable row level security;
+alter table reportes enable row level security;
 alter table evidencias enable row level security;
 
 do $$
@@ -376,6 +396,40 @@ begin
   ) then
     create policy "Registro publico de trazabilidad de alertas"
     on alertas_trazabilidad for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'reportes'
+      and policyname = 'Lectura publica de reportes'
+  ) then
+    create policy "Lectura publica de reportes"
+    on reportes for select
+    using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'reportes'
+      and policyname = 'Registro publico de reportes'
+  ) then
+    create policy "Registro publico de reportes"
+    on reportes for insert
+    with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'reportes'
+      and policyname = 'Actualizacion publica de reportes'
+  ) then
+    create policy "Actualizacion publica de reportes"
+    on reportes for update
+    using (true)
     with check (true);
   end if;
 
