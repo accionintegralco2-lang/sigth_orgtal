@@ -57,6 +57,24 @@ Luego:
 4. Registrar una evidencia.
 5. Confirmar en Supabase que se creo el registro en la tabla `evidencias`.
 
+## 6. Prueba integral
+
+En Configuracion usar el boton:
+
+```bash
+Prueba integral Supabase
+```
+
+La app revisa:
+
+- Variables de entorno.
+- Lectura de tablas principales.
+- Acceso al bucket `evidencias`.
+- Creacion y eliminacion de un registro temporal en `dependencias`.
+
+Si todos los puntos aparecen como `Listo`, la app queda preparada para guardar
+datos reales de dependencias nuevas.
+
 ## Estado actual
 
 Los primeros modulos conectados a Supabase son Dependencias, Personal, Funciones, Entrevistas, Encuestas, Alertas, Reportes y Evidencias. Los demas modulos siguen funcionando con datos piloto/locales y se pueden conectar uno por uno para evitar que el sistema se atasque.

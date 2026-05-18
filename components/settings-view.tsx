@@ -5,7 +5,12 @@ import { AppShell } from "@/components/app-shell";
 import { useOrgData, type WorkspaceBackup } from "@/components/org-data-provider";
 import { buildDataQualitySummary } from "@/lib/data-quality";
 import { dependencyTemplates, templateToForm } from "@/lib/dependency-templates";
-import { supabaseStatus, testSupabaseEvidenceStorage } from "@/lib/supabase";
+import {
+  supabaseStatus,
+  testSupabaseEvidenceStorage,
+  testSupabaseOperationalReadiness,
+  type SupabaseReadinessCheck
+} from "@/lib/supabase";
 import type { Funcion, Persona, RiskLevel } from "@/types";
 
 const initialDiagnosis = {
@@ -70,7 +75,10 @@ export function SettingsView() {
   const [bulkMessage, setBulkMessage] = useState("");
   const [bulkPreview, setBulkPreview] = useState<BulkPreview | null>(null);
   const [supabaseTestMessage, setSupabaseTestMessage] = useState("");
+  const [supabaseReadinessMessage, setSupabaseReadinessMessage] = useState("");
+  const [supabaseReadinessChecks, setSupabaseReadinessChecks] = useState<SupabaseReadinessCheck[]>([]);
   const [isTestingSupabase, setIsTestingSupabase] = useState(false);
+  const [isTestingReadiness, setIsTestingReadiness] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [installMessage, setInstallMessage] = useState("");
   const bulkErrors = bulkPreview?.issues.filter((issue) => issue.type === "error") ?? [];
@@ -409,6 +417,14 @@ export function SettingsView() {
     setIsTestingSupabase(false);
   }
 
+  async function testSupabaseReadiness() {
+    setIsTestingReadiness(true);
+    const result = await testSupabaseOperationalReadiness();
+    setSupabaseReadinessMessage(result.message);
+    setSupabaseReadinessChecks(result.checks);
+    setIsTestingReadiness(false);
+  }
+
   async function installApp() {
     if (!installPrompt) {
       setInstallMessage(
@@ -706,8 +722,23 @@ export function SettingsView() {
             <button className="secondary-action" disabled={isTestingSupabase} type="button" onClick={testSupabaseConnection}>
               {isTestingSupabase ? "Probando..." : "Probar conexion"}
             </button>
+            <button className="primary-action" disabled={isTestingReadiness} type="button" onClick={testSupabaseReadiness}>
+              {isTestingReadiness ? "Verificando..." : "Prueba integral Supabase"}
+            </button>
           </div>
           {supabaseTestMessage ? <p className="import-message">{supabaseTestMessage}</p> : null}
+          {supabaseReadinessMessage ? <p className="import-message">{supabaseReadinessMessage}</p> : null}
+          {supabaseReadinessChecks.length ? (
+            <div className="supabase-check-grid">
+              {supabaseReadinessChecks.map((check) => (
+                <article className={check.ok ? "ready" : "watch"} key={check.label}>
+                  <span>{check.ok ? "Listo" : "Pendiente"}</span>
+                  <strong>{check.label}</strong>
+                  <p>{check.detail}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
         </section>
 
         <section className="panel setup-panel">

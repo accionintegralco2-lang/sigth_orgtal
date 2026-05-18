@@ -3412,6 +3412,53 @@ td {
   line-height: 1.45;
 }
 
+.supabase-check-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.supabase-check-grid article {
+  min-height: 118px;
+  display: grid;
+  gap: 7px;
+  align-content: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.supabase-check-grid article.ready {
+  border-color: rgba(38, 115, 77, 0.24);
+  background: rgba(38, 115, 77, 0.07);
+}
+
+.supabase-check-grid article.watch {
+  border-color: rgba(168, 111, 18, 0.28);
+  background: rgba(168, 111, 18, 0.08);
+}
+
+.supabase-check-grid span {
+  color: var(--gold-dark);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.supabase-check-grid strong {
+  color: var(--brand);
+  line-height: 1.2;
+}
+
+.supabase-check-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .setup-steps {
   display: grid;
   gap: 8px;
@@ -3993,6 +4040,7 @@ td {
   .signature-grid,
   .survey-grid,
   .supabase-status-grid,
+  .supabase-check-grid,
   .sustentation-hero,
   .sustentation-metrics,
   .sustention-route-grid,
