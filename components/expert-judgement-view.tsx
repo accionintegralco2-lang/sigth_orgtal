@@ -25,8 +25,8 @@ export function ExpertJudgementView() {
           </div>
           <div className="action-row">
             <span className="status-pill">Validado preliminarmente</span>
-            <Link className="primary-action" href="/encuesta/expertos" target="_blank">
-              Abrir encuesta expertos
+            <Link className="primary-action" href="/entrevistas">
+              Abrir entrevistas
             </Link>
           </div>
         </section>

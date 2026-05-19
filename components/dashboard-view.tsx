@@ -84,8 +84,8 @@ export function DashboardView() {
       href: "/matriz-funcion-persona"
     },
     {
-      title: "Mostrar encuestas",
-      detail: "Abrir enlaces externos para personal y expertos validadores.",
+      title: "Aplicar cuestionarios",
+      detail: "Diligenciar entrevistas, encuesta funcional y rubrica de expertos dentro del modulo.",
       href: "/entrevistas"
     },
     {
@@ -111,14 +111,9 @@ export function DashboardView() {
       detail: "Ingreso directo al tablero ejecutivo."
     },
     {
-      label: "Encuesta personal",
-      path: "/encuesta/personal",
-      detail: "Formulario externo para funcionarios."
-    },
-    {
-      label: "Rubrica expertos",
-      path: "/encuesta/expertos",
-      detail: "Instrumento para validadores."
+      label: "Entrevistas y cuestionarios",
+      path: "/entrevistas",
+      detail: "Instrumentos internos para personal y expertos."
     },
     {
       label: "Reporte",

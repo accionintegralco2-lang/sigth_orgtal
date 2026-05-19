@@ -1,77 +1,9 @@
 import Link from "next/link";
-
-const mainMenuItems = [
-  {
-    title: "Dashboard ejecutivo",
-    href: "/dashboard",
-    description: "Estado general, riesgos, avance y prioridades directivas.",
-    tag: "Direccion"
-  },
-  {
-    title: "Modulo misional",
-    href: "/dependencias",
-    description: "Dependencias, mision, procesos y estructura evaluada.",
-    tag: "Estructura"
-  },
-  {
-    title: "Modulo funcional",
-    href: "/funciones",
-    description: "Funciones reales, asignadas, criticas, duplicadas o sin responsable.",
-    tag: "Funciones"
-  },
-  {
-    title: "Organizacion requerida",
-    href: "/configuracion",
-    description: "Nueva dependencia, personal esperado y configuracion inicial.",
-    tag: "Planeacion"
-  },
-  {
-    title: "Talento disponible",
-    href: "/personal",
-    description: "Personal, cargos, experiencia, competencias y carga laboral.",
-    tag: "Talento"
-  },
-  {
-    title: "Matriz persona-funcion",
-    href: "/matriz-funcion-persona",
-    description: "Responsables, respaldos, duplicidades y vacios funcionales.",
-    tag: "Matriz"
-  },
-  {
-    title: "Brechas",
-    href: "/perfiles",
-    description: "Comparacion entre perfil requerido, talento disponible y acciones.",
-    tag: "Analisis"
-  },
-  {
-    title: "Alertas",
-    href: "/alertas",
-    description: "Riesgos, trazabilidad, responsables y acciones de cierre.",
-    tag: "Control"
-  },
-  {
-    title: "Prospectiva",
-    href: "/prospectiva",
-    description: "Funciones futuras, competencias emergentes y riesgos proyectados.",
-    tag: "Futuro"
-  },
-  {
-    title: "Guia de uso",
-    href: "/asistente-diagnostico",
-    description: "Ruta guiada para cargar datos y completar el diagnostico.",
-    tag: "Ayuda"
-  },
-  {
-    title: "Configuracion",
-    href: "/configuracion",
-    description: "Supabase, respaldos, carga masiva, instalacion y datos piloto.",
-    tag: "Sistema"
-  }
-];
+import { mainModules } from "@/lib/module-menu";
 
 const priorityActions = [
   { label: "Ver diagnostico", href: "/dashboard" },
-  { label: "Cargar dependencia", href: "/configuracion" },
+  { label: "Cargar dependencia", href: "/organizacion-requerida" },
   { label: "Generar informe", href: "/reportes" },
   { label: "Modo sustentacion", href: "/sustentacion" }
 ];
@@ -87,13 +19,6 @@ export default function HomePage() {
             Sistema institucional para diagnostico organizacional, talento humano,
             funciones, cargas laborales, alertas y reportes ejecutivos.
           </p>
-          <div className="main-menu-actions">
-            {priorityActions.map((action) => (
-              <Link href={action.href} key={action.href}>
-                {action.label}
-              </Link>
-            ))}
-          </div>
         </div>
 
         <aside className="main-menu-author">
@@ -103,33 +28,39 @@ export default function HomePage() {
         </aside>
       </section>
 
-      <section className="main-menu-intro">
+      <section className="main-menu-intro main-menu-actions-panel">
         <div>
-          <h2>Accesos principales</h2>
+          <h2>11 modulos principales</h2>
           <p>
-            Selecciona el modulo requerido. El menu mantiene la navegacion limpia
-            y evita saturar al usuario con informacion tecnica al inicio.
+            La app queda organizada como una herramienta ejecutiva: cada cuadro
+            agrupa sus funciones internas para que el usuario avance sin saturarse.
           </p>
         </div>
-        <Link className="secondary-action" href="/roles">
-          Ver modo usuario simple
-        </Link>
+        <div className="main-menu-actions">
+          {priorityActions.map((action) => (
+            <Link href={action.href} key={action.href}>
+              {action.label}
+            </Link>
+          ))}
+          <Link href="/roles">Modo usuario</Link>
+        </div>
       </section>
 
       <section className="main-menu-grid" aria-label="Accesos principales de SIGTH_ORGTAL">
-        {mainMenuItems.map((item) => (
+        {mainModules.map((item) => (
           <Link className="main-menu-card" href={item.href} key={`${item.title}-${item.href}`}>
             <span>{item.tag}</span>
             <strong>{item.title}</strong>
             <p>{item.description}</p>
+            <small>{item.scope}</small>
           </Link>
         ))}
       </section>
 
       <section className="main-menu-footer">
         <p>
-          Version demostrativa con datos piloto y preparada para cargar
-          dependencias nuevas cuando Supabase este conectado.
+          Version demostrativa con datos piloto, Supabase activo y preparada para
+          cargar dependencias nuevas sin perder la estructura metodologica.
         </p>
         <Link href="/configuracion">Configuracion y preparacion externa</Link>
       </section>

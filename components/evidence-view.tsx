@@ -34,7 +34,7 @@ const associatedOptions = [
   "Manual de funciones",
   "Organigrama",
   "Entrevista a jefe",
-  "Encuesta personal",
+  "Entrevistas y cuestionarios",
   "Juicio de expertos",
   "Alerta critica",
   "Reporte final"

@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { useOrgData } from "@/components/org-data-provider";
 import { fetchSurveySubmissions, saveSurveySubmission } from "@/lib/interview-repository";
@@ -334,35 +333,6 @@ export function InterviewsManager() {
               Descargar resultados CSV
             </button>
           </article>
-        </section>
-
-        <section className="panel external-survey-panel">
-          <div className="panel-heading">
-            <h2>Links externos de diligenciamiento</h2>
-            <span>Acceso sin tablero</span>
-          </div>
-          <div className="external-link-grid">
-            <article>
-              <span>Encuesta personal</span>
-              <strong>/encuesta/personal</strong>
-              <p>Para funcionarios que reportan funciones reales, carga y claridad del cargo.</p>
-              <Link className="primary-action" href="/encuesta/personal" target="_blank">
-                Abrir link
-              </Link>
-            </article>
-            <article>
-              <span>Encuesta expertos</span>
-              <strong>/encuesta/expertos</strong>
-              <p>
-                Para validadores que evalúan claridad, pertinencia y aplicabilidad
-                del instrumento. Incluye {expertSurveyQuestions.length} preguntas
-                de la rúbrica de criterios.
-              </p>
-              <Link className="primary-action" href="/encuesta/expertos" target="_blank">
-                Abrir link
-              </Link>
-            </article>
-          </div>
         </section>
 
         <section className="dashboard-grid">

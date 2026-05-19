@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { useOrgData } from "@/components/org-data-provider";
 import { buildDiagnosisProgress } from "@/lib/diagnosis-progress";
+import { getModuleForPath, routeLabels } from "@/lib/module-menu";
 import { getNavigationForRole, roleHome, roleMission, userRoles } from "@/lib/roles";
 import type { UserRole } from "@/types";
 
@@ -15,6 +16,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { activeRole, setActiveRole } = data;
   const progress = buildDiagnosisProgress(data);
   const navItems = getNavigationForRole(activeRole);
+  const currentModule = getModuleForPath(pathname);
 
   return (
     <div className="app-shell">
@@ -26,9 +28,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             <small>Sistema 360</small>
           </div>
         </div>
+        <span className="nav-section-label">Modulos ORGTAL</span>
         <nav className="main-nav" aria-label="Navegacion principal">
           {navItems.map(({ label, href }) => (
-            <Link className={pathname === href || pathname.startsWith(`${href}/`) ? "active" : ""} key={href} href={href}>
+            <Link
+              className={
+                pathname === href || pathname.startsWith(`${href}/`) || currentModule?.href === href
+                  ? "active"
+                  : ""
+              }
+              key={`${label}-${href}`}
+              href={href}
+            >
               <span className="nav-indicator" />
               {label}
             </Link>
@@ -45,7 +56,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div>
             <p className="eyebrow">Version minima funcional</p>
             <strong>Diagnostico organizacional institucional</strong>
-            <small className="topbar-role-mission">{roleMission[activeRole]}</small>
+            <small className="topbar-role-mission">
+              {currentModule ? `${currentModule.tag}: ${currentModule.title}` : roleMission[activeRole]}
+            </small>
           </div>
           <div className="topbar-status">
             <span className="status-dot" />
@@ -67,6 +80,22 @@ export function AppShell({ children }: { children: ReactNode }) {
             </label>
           </div>
         </header>
+        {currentModule && currentModule.relatedRoutes.length > 1 ? (
+          <nav className="module-subnav" aria-label={`Accesos del modulo ${currentModule.title}`}>
+            <span>{currentModule.title}</span>
+            <div>
+              {currentModule.relatedRoutes.map((route) => (
+                <Link
+                  className={pathname === route || pathname.startsWith(`${route}/`) ? "active" : ""}
+                  href={route}
+                  key={route}
+                >
+                  {routeLabels[route] ?? route}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        ) : null}
         {children}
       </div>
     </div>
