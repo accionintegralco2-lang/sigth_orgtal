@@ -2,9 +2,38 @@
 
 Esta guia conecta la app publica con una base de datos real. La app puede seguir mostrando datos piloto, pero al activar Supabase empieza a guardar evidencias reales.
 
+## Estado verificado 2026-05-18
+
+Proyecto Supabase:
+
+```bash
+wflfroecchxgfswuwpnp
+```
+
+Web principal:
+
+```bash
+https://sigth-orgtal.vercel.app
+```
+
+Estado actual:
+
+- Variables de entorno en Vercel: configuradas.
+- Despliegue principal en Vercel: activo.
+- Archivo local `.env.local`: configurado en este PC.
+- Tablas en Supabase: pendientes de crear.
+- Bucket `evidencias`: pendiente de crear.
+
+Si en la app aparece un error de tablas o bucket, no es problema de Vercel:
+falta ejecutar `supabase/schema.sql` en Supabase.
+
 ## 1. Crear o abrir el proyecto
 
-Entrar a Supabase y abrir el proyecto destinado a SIGTH_ORGTAL.
+Entrar a Supabase y abrir el proyecto destinado a SIGTH_ORGTAL:
+
+```bash
+https://supabase.com/dashboard/project/wflfroecchxgfswuwpnp
+```
 
 ## 2. Crear tablas y permisos
 
@@ -12,10 +41,15 @@ En Supabase:
 
 1. Abrir SQL Editor.
 2. Crear una nueva consulta.
-3. Copiar el contenido completo de `supabase/schema.sql`.
+3. Copiar primero el contenido completo de `supabase/schema_minimo_funcional.sql`.
 4. Ejecutar la consulta.
 
-Ese archivo crea las tablas institucionales, la tabla `evidencias` y el bucket `evidencias`.
+Ese archivo crea las tablas que la app necesita para pasar la prueba integral:
+`dependencias`, `personal`, `funciones`, `entrevistas`, `encuesta_respuestas`,
+`alertas_trazabilidad`, `reportes` y `evidencias`.
+
+Luego, cuando esa prueba ya este en verde, se puede ejecutar `supabase/schema.sql`
+como version completa del modelo.
 
 ## 3. Revisar Storage
 
@@ -31,7 +65,7 @@ Si no aparece, volver a ejecutar `supabase/schema.sql`.
 
 En Vercel, abrir el proyecto SIGTH_ORGTAL y entrar a Settings > Environment Variables.
 
-Agregar:
+Agregar o verificar:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
@@ -40,6 +74,9 @@ NEXT_PUBLIC_SUPABASE_EVIDENCE_BUCKET=evidencias
 ```
 
 Despues hacer redeploy.
+
+Nota: en la revision del 2026-05-18 estas variables ya quedaron configuradas
+en Vercel para produccion, vista previa y desarrollo.
 
 ## 5. Probar en la app
 
