@@ -1,22 +1,23 @@
 :root {
-  --bg: #edf1ee;
+  --bg: #eef3f4;
   --surface: #ffffff;
-  --surface-soft: #f6f8f6;
-  --text: #17211f;
-  --muted: #65716d;
-  --line: #d7e0dc;
-  --brand: #1f4d43;
-  --brand-strong: #102b25;
-  --brand-deep: #0d211c;
-  --teal: #2c7b70;
-  --gold: #b08a3c;
-  --gold-soft: #efe6d2;
-  --green: #26734d;
-  --yellow: #a86f12;
-  --red: #a43b32;
-  --critical: #7b2430;
-  --shadow: 0 18px 55px rgba(23, 33, 31, 0.08);
-  --shadow-strong: 0 22px 65px rgba(16, 43, 37, 0.16);
+  --surface-soft: #f7faf9;
+  --text: #162522;
+  --muted: #5f6f72;
+  --line: #d6e1e3;
+  --brand: #17605a;
+  --brand-strong: #0f3436;
+  --brand-deep: #0b2428;
+  --teal: #2f8c85;
+  --gold: #a98434;
+  --gold-soft: #f1e8d2;
+  --green: #24745b;
+  --yellow: #b26f16;
+  --red: #b2483d;
+  --critical: #84283d;
+  --info: #2f6f99;
+  --shadow: 0 18px 55px rgba(22, 37, 34, 0.08);
+  --shadow-strong: 0 22px 65px rgba(15, 52, 54, 0.15);
 }
 
 * {
@@ -26,7 +27,7 @@
 body {
   margin: 0;
   background:
-    linear-gradient(180deg, #f8faf8 0, var(--bg) 330px),
+    linear-gradient(180deg, #fbfdfc 0, var(--bg) 330px),
     var(--bg);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
@@ -137,7 +138,7 @@ button {
   gap: 14px;
   padding: 28px;
   background:
-    linear-gradient(180deg, #f8faf8 0, #edf1ee 280px),
+    linear-gradient(180deg, #fbfdfc 0, var(--bg) 280px),
     var(--bg);
 }
 
