@@ -1,5 +1,8 @@
 EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL/
 EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL.Path/
+temp_revision/
+**/temp_revision/
+**/soffice_convert_*/
 .npm-cache/
 _sync_github_temp_*/
 .sync-last-path.txt
