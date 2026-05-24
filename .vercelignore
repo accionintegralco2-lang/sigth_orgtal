@@ -1,6 +1,8 @@
 EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL/
 EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL.Path/
 .npm-cache/
+_sync_github_temp_*/
+.sync-last-path.txt
 .next/
 node_modules/
 *.zip
