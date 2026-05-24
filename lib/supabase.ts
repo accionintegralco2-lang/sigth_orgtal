@@ -20,7 +20,7 @@ export async function testSupabaseEvidenceStorage() {
   if (!isSupabaseConfigured || !supabase) {
     return {
       ok: false,
-      message: "Supabase no esta configurado. Falta crear .env.local con URL y llave publica."
+      message: "Supabase no esta configurado. Faltan variables de entorno con URL y llave publica."
     };
   }
 
@@ -59,7 +59,7 @@ export async function testSupabaseOperationalReadiness(): Promise<{
         {
           label: "Variables de entorno",
           ok: false,
-          detail: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."
+          detail: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en Vercel o en .env.local para desarrollo local."
         }
       ]
     };

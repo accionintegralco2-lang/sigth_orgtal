@@ -95,7 +95,9 @@ export function SettingsView() {
     {
       label: "Base de datos Supabase",
       ready: supabaseStatus.configured,
-      detail: supabaseStatus.configured ? "Variables configuradas" : "Faltan variables en Vercel o .env.local",
+      detail: supabaseStatus.configured
+        ? "Variables de entorno detectadas"
+        : "Faltan variables en Vercel o en el archivo local de desarrollo",
       action: "Configurar Supabase"
     },
     {
@@ -707,16 +709,32 @@ export function SettingsView() {
               <p>Este es el contenedor donde se guardaran documentos, soportes y anexos.</p>
             </article>
             <article className="supabase-card">
-              <span>Archivo requerido</span>
-              <strong>.env.local</strong>
-              <p>Debe contener NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y el bucket.</p>
+              <span>Configuracion Supabase</span>
+              <strong>{supabaseStatus.configured ? "Produccion activa" : ".env.local pendiente"}</strong>
+              <p>
+                {supabaseStatus.configured
+                  ? "En Vercel ya estan configuradas la URL, la llave publica y el bucket. .env.local solo se usa para desarrollo en este PC."
+                  : "Para desarrollo local debe contener NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y el bucket."}
+              </p>
             </article>
           </div>
           <ol className="setup-steps">
-            <li>Crear un proyecto en Supabase.</li>
-            <li>Ejecutar el archivo supabase/schema.sql en el editor SQL de Supabase.</li>
-            <li>Crear el archivo .env.local usando .env.local.example como guia.</li>
-            <li>Reiniciar la app para activar la carga real de documentos.</li>
+            <li>{supabaseStatus.configured ? "Produccion: conexion activa con Supabase." : "Crear un proyecto en Supabase."}</li>
+            <li>
+              {supabaseStatus.configured
+                ? "Base de datos: tablas disponibles para cargar dependencias nuevas."
+                : "Ejecutar el archivo supabase/schema.sql en el editor SQL de Supabase."}
+            </li>
+            <li>
+              {supabaseStatus.configured
+                ? `Evidencias: bucket ${supabaseStatus.evidenceBucket} listo para documentos y anexos.`
+                : "Crear el archivo .env.local usando .env.local.example como guia."}
+            </li>
+            <li>
+              {supabaseStatus.configured
+                ? "Despues de cambios importantes, usar la prueba integral para confirmar que todo sigue listo."
+                : "Reiniciar la app para activar la carga real de documentos."}
+            </li>
           </ol>
           <div className="action-row">
             <button className="secondary-action" disabled={isTestingSupabase} type="button" onClick={testSupabaseConnection}>

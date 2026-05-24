@@ -1,0 +1,9 @@
+EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL/
+EVIDENCIA_PROTOTIPO_SIGTH_ORGTAL.Path/
+.npm-cache/
+.next/
+node_modules/
+*.zip
+*.docx
+*.webm
+*.mp3
