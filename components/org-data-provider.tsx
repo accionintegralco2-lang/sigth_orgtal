@@ -8,6 +8,7 @@ import { deleteFunctionRecord, fetchFunctionRecords, saveFunctionRecord, saveFun
 import { deleteInterviewRecord, fetchInterviewRecords, saveInterviewRecord } from "@/lib/interview-repository";
 import { deletePersonnelRecord, fetchPersonnelRecords, savePersonnelRecord, savePersonnelRecords } from "@/lib/personnel-repository";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { clearWorkspaceRecords } from "@/lib/workspace-repository";
 import type { Alert, Dependencia, Entrevista, Evidencia, Funcion, Persona, UserRole } from "@/types";
 
 type OrgDataContextValue = {
@@ -281,9 +282,11 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         setEvidenceState([]);
         setWorkspaceMode("propio");
         setActiveRole("Administrador");
-        saveDependencyRecord(dependencia).catch((error) => {
-          console.warn("No se pudo guardar la nueva dependencia en Supabase", error);
-        });
+        clearWorkspaceRecords()
+          .then(() => saveDependencyRecord(dependencia))
+          .catch((error) => {
+            console.warn("No se pudo preparar el diagnostico nuevo en Supabase", error);
+          });
       },
       exportWorkspace: () => ({
         version: 1,

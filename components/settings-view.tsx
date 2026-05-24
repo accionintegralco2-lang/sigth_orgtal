@@ -285,11 +285,25 @@ export function SettingsView() {
       : "moderado";
   }
 
+  function parseNumericValue(value: string | undefined) {
+    if (!value) return 0;
+    const normalized = value.trim().replace("%", "").replace(",", ".");
+    return Number(normalized) || 0;
+  }
+
   function validatePersonalRows(rows: CsvRow[]) {
     const dependencyNames = new Set(dependencias.map((item) => item.nombre));
     const seenCodes = new Set<string>();
     const issues: BulkIssue[] = [];
     const items: Array<Omit<Persona, "id">> = [];
+
+    if (rows.length > 30) {
+      issues.push({
+        row: 1,
+        type: "error",
+        message: "La carga de personal supera 30 personas. Divide el archivo por dependencia."
+      });
+    }
 
     rows.forEach((row, index) => {
       const rowNumber = index + 2;
@@ -316,12 +330,12 @@ export function SettingsView() {
         formacion: row.formacion?.trim(),
         experiencia: row.experiencia?.trim() || "Sin registrar",
         tiempoCargo: row.tiempoCargo?.trim() || "Sin registrar",
-        funciones: Number(row.funciones) || 0,
+        funciones: parseNumericValue(row.funciones),
         complejidad: row.complejidad?.trim() || "Media",
-        cargaLaboral: Number(row.cargaLaboral) || 0,
-        competenciaTecnica: Number(row.competenciaTecnica) || undefined,
-        competenciaDigital: Number(row.competenciaDigital) || undefined,
-        competenciaComportamental: Number(row.competenciaComportamental) || undefined,
+        cargaLaboral: parseNumericValue(row.cargaLaboral),
+        competenciaTecnica: parseNumericValue(row.competenciaTecnica) || undefined,
+        competenciaDigital: parseNumericValue(row.competenciaDigital) || undefined,
+        competenciaComportamental: parseNumericValue(row.competenciaComportamental) || undefined,
         fortalezas: row.fortalezas?.trim()
       });
     });
@@ -360,8 +374,8 @@ export function SettingsView() {
         proceso: row.proceso?.trim(),
         producto: row.producto?.trim(),
         frecuencia: row.frecuencia?.trim() || "Semanal",
-        horasSemana: Number(row.horasSemana) || undefined,
-        ipf: Number(row.ipf) || undefined,
+        horasSemana: parseNumericValue(row.horasSemana) || undefined,
+        ipf: parseNumericValue(row.ipf) || undefined,
         nivelIpf: row.nivelIpf?.trim(),
         estado: row.estado?.trim(),
         riesgo: normalizeRisk(row.riesgo || "moderado"),
