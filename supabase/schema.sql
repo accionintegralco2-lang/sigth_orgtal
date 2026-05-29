@@ -275,6 +275,19 @@ alter table alertas_trazabilidad enable row level security;
 alter table reportes enable row level security;
 alter table evidencias enable row level security;
 
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on table
+  public.dependencias,
+  public.personal,
+  public.funciones,
+  public.entrevistas,
+  public.encuesta_respuestas,
+  public.alertas_trazabilidad,
+  public.reportes,
+  public.evidencias
+to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
+
 do $$
 begin
   if not exists (
