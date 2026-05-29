@@ -22,7 +22,7 @@ export function ProfilesView() {
             <h1>Perfiles y competencias</h1>
             <p>
               Vista integrada de roles funcionales requeridos, brechas detectadas y
-              compatibilidad persona-funcion tomada del modelo piloto SIGTH_ORGTAL v1.5.
+              compatibilidad persona-funcion tomada del modelo piloto ORGTAL v1.5.
             </p>
           </div>
           <span className="status-pill">ICPF promedio {averageCompatibility}%</span>

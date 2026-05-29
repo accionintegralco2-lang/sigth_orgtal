@@ -217,7 +217,7 @@ export function ReportsView() {
         <section className="report-document">
           <section className="report-cover">
             <div>
-              <p className="eyebrow">SIGTH_ORGTAL 360</p>
+              <p className="eyebrow">ORGTAL 360</p>
               <h2>Informe formal de diagnostico organizacional</h2>
               <p>
                 Sistema Organizacional de Gestion del Talento Humano, Funciones
@@ -246,7 +246,7 @@ export function ReportsView() {
 
           <header className="report-header">
             <div>
-              <p className="eyebrow">SIGTH_ORGTAL</p>
+              <p className="eyebrow">ORGTAL</p>
               <h2>Informe ejecutivo de diagnostico organizacional</h2>
               <p>Fecha de generacion: {reportDate}</p>
             </div>

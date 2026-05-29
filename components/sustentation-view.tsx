@@ -58,7 +58,7 @@ export function SustentationView() {
       <main className="page-stack">
         <section className="sustentation-hero">
           <div>
-            <span>SIGTH_ORGTAL</span>
+            <span>ORGTAL</span>
             <h1>Modo sustentacion</h1>
             <p>
               Pantalla preparada para presentar el desarrollo tecnologico,

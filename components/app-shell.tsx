@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="brand-block">
           <span className="brand-mark">OS</span>
           <div>
-            <strong>SIGTH_ORGTAL</strong>
+            <strong>ORGTAL</strong>
             <small>Sistema 360</small>
           </div>
         </div>

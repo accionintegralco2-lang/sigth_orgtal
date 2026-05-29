@@ -1514,7 +1514,7 @@ export const entrevistas: Entrevista[] = [
   },
   {
     "id": "ent-piloto-4",
-    "instrumento": "Juicio de expertos SIGTH_ORGTAL v1.5",
+    "instrumento": "Juicio de expertos ORGTAL v1.5",
     "dirigidoA": "Expertos",
     "respuestas": 5,
     "estado": "Activo",
@@ -1527,7 +1527,7 @@ export const reportes: Reporte[] = [
   {
     "nombre": "Informe ejecutivo de diagnostico piloto",
     "tipo": "PDF",
-    "descripcion": "Resumen de funciones, cargas, alertas, brechas y plan de mejora del piloto SIGTH_ORGTAL v1.5."
+    "descripcion": "Resumen de funciones, cargas, alertas, brechas y plan de mejora del piloto ORGTAL v1.5."
   },
   {
     "nombre": "Matriz de funciones criticas",
@@ -1771,7 +1771,7 @@ export const criteriosExpertos: CriterioExperto[] = [
   },
   {
     criterio: "Pertinencia frente al problema",
-    definicion: "Relacion entre SIGTH_ORGTAL, el problema y sus objetivos.",
+    definicion: "Relacion entre ORGTAL, el problema y sus objetivos.",
     pregunta: "Responde a la necesidad de diagnostico organizacional",
     e1: 5,
     e2: 4,
@@ -1940,7 +1940,7 @@ export const criteriosExpertos: CriterioExperto[] = [
   {
     criterio: "Calidad de la guia metodologica de uso",
     definicion: "Claridad de instrucciones, pasos y criterios de interpretacion.",
-    pregunta: "La guia permite usar SIGTH_ORGTAL correctamente",
+    pregunta: "La guia permite usar ORGTAL correctamente",
     e1: 5,
     e2: 4,
     e3: 4,

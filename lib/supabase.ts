@@ -101,7 +101,7 @@ export async function testSupabaseOperationalReadiness(): Promise<{
   const testClientId = `healthcheck-${Date.now()}`;
   const { error: insertError } = await supabase.from("dependencias").insert({
     client_id: testClientId,
-    nombre: "Prueba tecnica SIGTH_ORGTAL",
+    nombre: "Prueba tecnica ORGTAL",
     jefe_responsable: "Sistema",
     mision: "Registro temporal de validacion",
     procesos: ["Validacion"],

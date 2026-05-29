@@ -20,7 +20,7 @@ export function ExpertJudgementView() {
             <h1>Juicio de expertos</h1>
             <p>
               Validacion preliminar de contenido, usabilidad, trazabilidad,
-              proteccion de datos y utilidad directiva de SIGTH_ORGTAL.
+              proteccion de datos y utilidad directiva de ORGTAL.
             </p>
           </div>
           <div className="action-row">

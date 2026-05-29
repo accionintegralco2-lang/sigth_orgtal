@@ -1,7 +1,7 @@
 {
-  "name": "SIGTH_ORGTAL - Sistema Organizacional de Gestion del Talento Humano",
-  "short_name": "SIGTH_ORGTAL",
-  "description": "Diagnostico organizacional, talento humano, funciones, cargas laborales, alertas y reportes.",
+  "name": "ORGTAL - Modelo Organizacional Automatizado",
+  "short_name": "ORGTAL",
+  "description": "Modelo Organizacional Automatizado para la Gestion Estrategica del Talento Humano.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",

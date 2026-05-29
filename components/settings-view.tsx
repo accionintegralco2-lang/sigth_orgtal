@@ -151,7 +151,7 @@ export function SettingsView() {
 
     function markInstalled() {
       setInstallPrompt(null);
-      setInstallMessage("SIGTH_ORGTAL ya quedo instalada en este dispositivo.");
+      setInstallMessage("ORGTAL ya quedo instalada en este dispositivo.");
     }
 
     window.addEventListener("beforeinstallprompt", captureInstallPrompt);
@@ -201,7 +201,7 @@ export function SettingsView() {
       try {
         const parsed = JSON.parse(String(reader.result)) as WorkspaceBackup;
         if (!parsed.version || !Array.isArray(parsed.dependencias)) {
-          setImportMessage("El archivo no parece ser un respaldo valido de SIGTH_ORGTAL.");
+          setImportMessage("El archivo no parece ser un respaldo valido de ORGTAL.");
           return;
         }
         importWorkspace(parsed);
@@ -454,7 +454,7 @@ export function SettingsView() {
     setInstallPrompt(null);
     setInstallMessage(
       choice.outcome === "accepted"
-        ? "Instalacion aceptada. SIGTH_ORGTAL quedara disponible como app en el dispositivo."
+        ? "Instalacion aceptada. ORGTAL quedara disponible como app en el dispositivo."
         : "Instalacion cancelada. Puedes intentarlo nuevamente desde el menu del navegador."
     );
   }
@@ -480,7 +480,7 @@ export function SettingsView() {
             <span>Innovacion tecnologica</span>
           </div>
           <p>
-            SIGTH_ORGTAL se presenta como una solucion de diagnostico organizacional
+            ORGTAL se presenta como una solucion de diagnostico organizacional
             basada en el modelo creado por Edwyn Arvey Lopez Acosta.
           </p>
           <div className="author-statement">
@@ -523,7 +523,7 @@ export function SettingsView() {
             <span>{productionScore}% listo</span>
           </div>
           <p>
-            Control rapido para saber si SIGTH_ORGTAL esta listo para jueces,
+            Control rapido para saber si ORGTAL esta listo para jueces,
             usuarios externos o carga de una dependencia nueva.
           </p>
           <div className="readiness-meter">
@@ -551,7 +551,7 @@ export function SettingsView() {
             <span>PWA web</span>
           </div>
           <p>
-            SIGTH_ORGTAL ya esta preparada para instalarse desde la URL publica
+            ORGTAL ya esta preparada para instalarse desde la URL publica
             en computadores y celulares compatibles, sin depender todavia de Play Store.
           </p>
           <div className="install-grid">
@@ -573,7 +573,7 @@ export function SettingsView() {
           </div>
           <div className="action-row">
             <button className="primary-action" type="button" onClick={installApp}>
-              Instalar SIGTH_ORGTAL
+              Instalar ORGTAL
             </button>
           </div>
           {installMessage ? <p className="import-message">{installMessage}</p> : null}

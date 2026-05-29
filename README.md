@@ -1,4 +1,4 @@
-# SIGTH_ORGTAL
+# ORGTAL
 
 Sistema Organizacional de Gestion del Talento Humano, Funciones y Cargas Laborales.
 
@@ -8,7 +8,7 @@ Esta primera version es una app web institucional creada con Next.js y preparada
 
 Derechos de autor, creacion e innovacion tecnologica: **Edwyn Arvey Lopez Acosta**.
 
-SIGTH_ORGTAL se presenta como una propuesta de innovacion tecnologica aplicada al diagnostico organizacional, talento humano, funciones y cargas laborales.
+ORGTAL se presenta como una propuesta de innovacion tecnologica aplicada al diagnostico organizacional, talento humano, funciones y cargas laborales.
 
 ## Modulos incluidos
 
@@ -41,7 +41,7 @@ antes de mostrar la app a jueces o usuarios externos.
 
 ## App instalable
 
-SIGTH_ORGTAL incluye manifiesto web, icono institucional y configuracion PWA
+ORGTAL incluye manifiesto web, icono institucional y configuracion PWA
 para que la version publicada pueda instalarse desde el navegador en equipos
 y celulares compatibles. Este es el paso previo recomendado antes de crear un
 paquete Android para Play Store.

@@ -175,7 +175,7 @@ export function DashboardView() {
 
         <section className="institutional-banner">
           <div className="banner-copy">
-            <span>SIGTH_ORGTAL 360</span>
+            <span>ORGTAL 360</span>
             <h2>Radiografia funcional para decision directiva</h2>
             <p>
               Consolidado visual del piloto: talento humano, funciones, cargas
@@ -237,7 +237,7 @@ export function DashboardView() {
             <span>Demostracion ante jueces</span>
           </div>
           <p>
-            Sigue esta secuencia para presentar SIGTH_ORGTAL como producto
+            Sigue esta secuencia para presentar ORGTAL como producto
             funcional: primero el diagnostico, luego la evidencia y finalmente
             el informe.
           </p>

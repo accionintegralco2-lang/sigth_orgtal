@@ -315,7 +315,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
   if (!hasMounted || !isReady) {
     return (
       <div className="app-loading-screen">
-        <strong>SIGTH_ORGTAL</strong>
+        <strong>ORGTAL</strong>
         <span>Preparando diagnostico institucional...</span>
       </div>
     );

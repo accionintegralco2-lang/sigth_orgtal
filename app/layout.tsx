@@ -6,11 +6,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://sigth-orgtal.vercel.app"),
   title: {
-    default: "SIGTH_ORGTAL",
-    template: "%s | SIGTH_ORGTAL"
+    default: "ORGTAL",
+    template: "%s | ORGTAL"
   },
-  applicationName: "SIGTH_ORGTAL",
-  description: "Sistema institucional de talento humano, funciones, cargas laborales, alertas y reportes.",
+  applicationName: "ORGTAL",
+  description: "Modelo Organizacional Automatizado para la Gestion Estrategica del Talento Humano.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/icon.svg",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "SIGTH_ORGTAL",
+    title: "ORGTAL",
     statusBarStyle: "default"
   },
   formatDetection: {

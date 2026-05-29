@@ -14,10 +14,9 @@ export default function HomePage() {
       <section className="main-menu-hero">
         <div className="main-menu-copy">
           <p className="eyebrow">Menu principal ORGTAL</p>
-          <h1>SIGTH_ORGTAL</h1>
+          <h1>ORGTAL</h1>
           <p className="lead">
-            Sistema institucional para diagnostico organizacional, talento humano,
-            funciones, cargas laborales, alertas y reportes ejecutivos.
+            Modelo Organizacional Automatizado para la Gestion Estrategica del Talento Humano.
           </p>
         </div>
 
@@ -32,7 +31,7 @@ export default function HomePage() {
         <div>
           <h2>11 modulos principales</h2>
           <p>
-            La app queda organizada como una herramienta ejecutiva: cada cuadro
+            ORGTAL queda organizada como una herramienta ejecutiva: cada cuadro
             agrupa sus funciones internas para que el usuario avance sin saturarse.
           </p>
         </div>
@@ -46,7 +45,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="main-menu-grid" aria-label="Accesos principales de SIGTH_ORGTAL">
+      <section className="main-menu-grid" aria-label="Accesos principales de ORGTAL">
         {mainModules.map((item) => (
           <Link className="main-menu-card" href={item.href} key={`${item.title}-${item.href}`}>
             <span>{item.tag}</span>

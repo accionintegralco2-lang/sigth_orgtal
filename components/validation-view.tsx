@@ -15,7 +15,7 @@ export function ValidationView() {
             <p className="eyebrow">Control de calidad</p>
             <h1>Validacion piloto</h1>
             <p>
-              Trazabilidad de pruebas del archivo SIGTH_ORGTAL v1.5: conteos, controles,
+              Trazabilidad de pruebas del archivo ORGTAL v1.5: conteos, controles,
               compatibilidad, prospectiva y juicio de expertos.
             </p>
           </div>
