@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { buildDataQualitySummary } from "@/lib/data-quality";
 import { buildExecutiveFindings, buildImprovementPlan, buildReportDate } from "@/lib/report-builder";
 import { fetchReportRecords, saveReportRecord, type ReportHistoryItem } from "@/lib/report-repository";
 
-const reportHistoryStorageKey = "sigth-orgtal-report-history-v1";
+const reportHistoryStorageKey = "orgtal-report-history-v1";
 
 function csvValue(value: string | number) {
   return `"${String(value).replaceAll('"', '""')}"`;
@@ -72,7 +72,7 @@ export function ReportsView() {
       ])
     ];
     const csv = rows.map((row) => row.map(csvValue).join(";")).join("\n");
-    downloadFile(`sigth_orgtal-alertas-${filenameDate}.csv`, csv, "text/csv;charset=utf-8");
+    downloadFile(`orgtal-alertas-${filenameDate}.csv`, csv, "text/csv;charset=utf-8");
   }
 
   function exportPlan() {
@@ -82,7 +82,7 @@ export function ReportsView() {
       ...plan.map((item) => [item.prioridad, item.hallazgo, item.accion, item.responsable, item.plazo])
     ];
     const csv = rows.map((row) => row.map(csvValue).join(";")).join("\n");
-    downloadFile(`sigth_orgtal-plan-mejora-${filenameDate}.csv`, csv, "text/csv;charset=utf-8");
+    downloadFile(`orgtal-plan-mejora-${filenameDate}.csv`, csv, "text/csv;charset=utf-8");
   }
 
   function saveReportHistory() {
@@ -386,3 +386,4 @@ export function ReportsView() {
     </AppShell>
   );
 }
+

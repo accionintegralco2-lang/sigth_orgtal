@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 import type { Funcion, RiskLevel } from "@/types";
 
 type FunctionRow = {
@@ -22,6 +23,7 @@ type FunctionRow = {
   observaciones: string | null;
   ranking_ipf: number | null;
   riesgo: string | null;
+  diagnostico_id?: string | null;
 };
 
 function isUuid(value: string) {
@@ -58,9 +60,10 @@ function toFuncion(row: FunctionRow): Funcion {
   };
 }
 
-function toRow(funcion: Funcion): FunctionRow {
+function toRow(funcion: Funcion, diagnosisId: string): FunctionRow {
   return {
     client_id: funcion.id,
+    diagnostico_id: diagnosisId,
     codigo: funcion.codigo || null,
     nombre: funcion.nombre,
     responsable: funcion.responsable || null,
@@ -82,12 +85,13 @@ function toRow(funcion: Funcion): FunctionRow {
   };
 }
 
-export async function fetchFunctionRecords() {
+export async function fetchFunctionRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("funciones")
-    .select("id, client_id, codigo, nombre, responsable, respaldo, tipo, proceso, producto, frecuencia, criticidad, frecuencia_valor, complejidad_valor, horas_semana, ipf, nivel_ipf, estado, observaciones, ranking_ipf, riesgo")
+    .select("id, client_id, codigo, nombre, responsable, respaldo, tipo, proceso, producto, frecuencia, criticidad, frecuencia_valor, complejidad_valor, horas_semana, ipf, nivel_ipf, estado, observaciones, ranking_ipf, riesgo, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -97,36 +101,36 @@ export async function fetchFunctionRecords() {
   return (data || []).map((row) => toFuncion(row as FunctionRow));
 }
 
-export async function saveFunctionRecord(funcion: Funcion) {
+export async function saveFunctionRecord(funcion: Funcion, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("funciones")
-    .upsert(toRow(funcion), { onConflict: "client_id" });
+    .upsert(toRow(funcion, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function saveFunctionRecords(funciones: Funcion[]) {
+export async function saveFunctionRecords(funciones: Funcion[], diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase || !funciones.length) return;
 
   const { error } = await supabase
     .from("funciones")
-    .upsert(funciones.map(toRow), { onConflict: "client_id" });
+    .upsert(funciones.map((funcion) => toRow(funcion, diagnosisId)), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function deleteFunctionRecord(id: string) {
+export async function deleteFunctionRecord(id: string, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const query = isUuid(id)
-    ? supabase.from("funciones").delete().eq("id", id)
-    : supabase.from("funciones").delete().eq("client_id", id);
+    ? supabase.from("funciones").delete().eq("id", id).eq("diagnostico_id", diagnosisId)
+    : supabase.from("funciones").delete().eq("client_id", id).eq("diagnostico_id", diagnosisId);
 
   const { error } = await query;
   if (error) {

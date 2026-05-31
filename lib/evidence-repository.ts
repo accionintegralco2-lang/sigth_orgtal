@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 import type { Evidencia } from "@/types";
 
 type EvidenceRow = {
@@ -12,6 +13,7 @@ type EvidenceRow = {
   estado: string | null;
   fecha: string | null;
   observaciones: string | null;
+  diagnostico_id?: string | null;
 };
 
 function isUuid(value: string) {
@@ -32,9 +34,10 @@ function toEvidence(row: EvidenceRow): Evidencia {
   };
 }
 
-function toRow(evidence: Evidencia): EvidenceRow {
+function toRow(evidence: Evidencia, diagnosisId: string): EvidenceRow {
   return {
     client_id: evidence.id,
+    diagnostico_id: diagnosisId,
     nombre: evidence.nombre,
     tipo: evidence.tipo,
     dependencia: evidence.dependencia,
@@ -46,12 +49,13 @@ function toRow(evidence: Evidencia): EvidenceRow {
   };
 }
 
-export async function fetchEvidenceRecords() {
+export async function fetchEvidenceRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("evidencias")
-    .select("id, client_id, nombre, tipo, dependencia, asociado_a, url, estado, fecha, observaciones")
+    .select("id, client_id, nombre, tipo, dependencia, asociado_a, url, estado, fecha, observaciones, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -61,24 +65,24 @@ export async function fetchEvidenceRecords() {
   return (data || []).map((row) => toEvidence(row as EvidenceRow));
 }
 
-export async function saveEvidenceRecord(evidence: Evidencia) {
+export async function saveEvidenceRecord(evidence: Evidencia, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("evidencias")
-    .upsert(toRow(evidence), { onConflict: "client_id" });
+    .upsert(toRow(evidence, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function deleteEvidenceRecord(id: string) {
+export async function deleteEvidenceRecord(id: string, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const query = isUuid(id)
-    ? supabase.from("evidencias").delete().eq("id", id)
-    : supabase.from("evidencias").delete().eq("client_id", id);
+    ? supabase.from("evidencias").delete().eq("id", id).eq("diagnostico_id", diagnosisId)
+    : supabase.from("evidencias").delete().eq("client_id", id).eq("diagnostico_id", diagnosisId);
 
   const { error } = await query;
   if (error) {

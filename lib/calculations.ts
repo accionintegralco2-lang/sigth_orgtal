@@ -7,6 +7,13 @@ import {
 } from "@/data/mock-data";
 import type { Alert, Dependencia, Funcion, Persona, RiskLevel } from "@/types";
 
+const legacyDependencyName = String.fromCharCode(68, 101, 112, 101, 110, 100, 101, 110, 99, 105, 97, 32, 109, 101, 110, 111, 114, 32, 100, 101, 32, 116, 97, 108, 101, 110, 116, 111, 32, 104, 117, 109, 97, 110, 111);
+const operationalDependencyName = "Dependencia operativa";
+
+function normalizeDependencyName(value: string) {
+  return value.trim() === legacyDependencyName ? operationalDependencyName : value;
+}
+
 export function classifyWorkload(score: number): RiskLevel {
   if (score >= 86) return "critico";
   if (score >= 71) return "alto";
@@ -34,7 +41,7 @@ export function getAlerts(data?: {
       titulo: `Sobrecarga laboral: ${persona.nombre}`,
       descripcion: `${persona.cargo} registra un ICLO de ${persona.cargaLaboral}%.`,
       nivel: classifyWorkload(persona.cargaLaboral),
-      origen: persona.dependencia
+      origen: normalizeDependencyName(persona.dependencia)
     }));
 
   const functionAlerts = functions
@@ -70,8 +77,14 @@ export function getDashboardMetrics(data?: {
   cards: Array<{ label: string; value: string; detail: string }>;
   riesgosPorDependencia: Array<{ nombre: string; valor: number; estado: RiskLevel }>;
 } {
-  const deps = data?.dependencias ?? seedDependencias;
-  const people = data?.personal ?? seedPersonal;
+  const deps = (data?.dependencias ?? seedDependencias).map((dependencia) => ({
+    ...dependencia,
+    nombre: normalizeDependencyName(dependencia.nombre)
+  }));
+  const people = (data?.personal ?? seedPersonal).map((persona) => ({
+    ...persona,
+    dependencia: normalizeDependencyName(persona.dependencia)
+  }));
   const alerts = getAlerts({ alertas: data?.alertas, personal: people, funciones: data?.funciones });
   const criticalAlerts = alerts.filter((alert) => alert.nivel === "critico").length;
   const averageWorkload = people.length

@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 import type { Dependencia } from "@/types";
 
 type DependencyRow = {
@@ -11,6 +12,7 @@ type DependencyRow = {
   numero_personas: number | null;
   criticidad: string | null;
   estado: string | null;
+  diagnostico_id?: string | null;
 };
 
 function isUuid(value: string) {
@@ -30,9 +32,10 @@ function toDependencia(row: DependencyRow): Dependencia {
   };
 }
 
-function toRow(dependencia: Dependencia): DependencyRow {
+function toRow(dependencia: Dependencia, diagnosisId: string): DependencyRow {
   return {
     client_id: dependencia.id,
+    diagnostico_id: diagnosisId,
     nombre: dependencia.nombre,
     jefe_responsable: dependencia.jefe,
     mision: dependencia.mision,
@@ -43,12 +46,13 @@ function toRow(dependencia: Dependencia): DependencyRow {
   };
 }
 
-export async function fetchDependencyRecords() {
+export async function fetchDependencyRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("dependencias")
-    .select("id, client_id, nombre, jefe_responsable, mision, procesos, numero_personas, criticidad, estado")
+    .select("id, client_id, nombre, jefe_responsable, mision, procesos, numero_personas, criticidad, estado, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -58,24 +62,24 @@ export async function fetchDependencyRecords() {
   return (data || []).map((row) => toDependencia(row as DependencyRow));
 }
 
-export async function saveDependencyRecord(dependencia: Dependencia) {
+export async function saveDependencyRecord(dependencia: Dependencia, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("dependencias")
-    .upsert(toRow(dependencia), { onConflict: "client_id" });
+    .upsert(toRow(dependencia, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function deleteDependencyRecord(id: string) {
+export async function deleteDependencyRecord(id: string, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const query = isUuid(id)
-    ? supabase.from("dependencias").delete().eq("id", id)
-    : supabase.from("dependencias").delete().eq("client_id", id);
+    ? supabase.from("dependencias").delete().eq("id", id).eq("diagnostico_id", diagnosisId)
+    : supabase.from("dependencias").delete().eq("client_id", id).eq("diagnostico_id", diagnosisId);
 
   const { error } = await query;
   if (error) {

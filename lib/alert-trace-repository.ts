@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 
 export type AlertTraceRecord = {
   estadoSeguimiento: "Abierta" | "En revision" | "Cerrada";
@@ -15,6 +16,7 @@ type AlertTraceRow = {
   fecha_seguimiento: string | null;
   evidencia: string | null;
   accion_tomada: string | null;
+  diagnostico_id?: string | null;
 };
 
 function toTrace(row: AlertTraceRow): AlertTraceRecord {
@@ -27,9 +29,10 @@ function toTrace(row: AlertTraceRow): AlertTraceRecord {
   };
 }
 
-function toRow(alertId: string, trace: AlertTraceRecord): AlertTraceRow {
+function toRow(alertId: string, trace: AlertTraceRecord, diagnosisId: string): AlertTraceRow {
   return {
     alerta_client_id: alertId,
+    diagnostico_id: diagnosisId,
     estado: trace.estadoSeguimiento,
     responsable: trace.responsableSeguimiento || null,
     fecha_seguimiento: trace.fechaSeguimiento || null,
@@ -38,12 +41,13 @@ function toRow(alertId: string, trace: AlertTraceRecord): AlertTraceRow {
   };
 }
 
-export async function fetchAlertTraceRecords() {
+export async function fetchAlertTraceRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return {};
 
   const { data, error } = await supabase
     .from("alertas_trazabilidad")
-    .select("alerta_client_id, estado, responsable, fecha_seguimiento, evidencia, accion_tomada")
+    .select("alerta_client_id, estado, responsable, fecha_seguimiento, evidencia, accion_tomada, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -58,12 +62,12 @@ export async function fetchAlertTraceRecords() {
   ) as Record<string, AlertTraceRecord>;
 }
 
-export async function saveAlertTraceRecord(alertId: string, trace: AlertTraceRecord) {
+export async function saveAlertTraceRecord(alertId: string, trace: AlertTraceRecord, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("alertas_trazabilidad")
-    .upsert(toRow(alertId, trace), { onConflict: "alerta_client_id" });
+    .upsert(toRow(alertId, trace, diagnosisId), { onConflict: "alerta_client_id" });
 
   if (error) {
     throw new Error(error.message);

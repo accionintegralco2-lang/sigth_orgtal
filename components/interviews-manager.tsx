@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
@@ -140,7 +140,7 @@ export function InterviewsManager() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sigth_orgtal-encuestas-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `orgtal-encuestas-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -392,3 +392,4 @@ export function InterviewsManager() {
     </AppShell>
   );
 }
+

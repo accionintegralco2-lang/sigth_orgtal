@@ -1,10 +1,10 @@
-# Publicacion web de SIGTH_ORGTAL
+﻿# Publicacion web de ORGTAL
 
 Esta guia prepara la app para mostrarse a jueces y usuarios externos como una web publica.
 
 ## Objetivo
 
-Publicar SIGTH_ORGTAL en internet con dos usos:
+Publicar ORGTAL en internet con dos usos:
 
 - Modo demostracion: datos piloto para jueces.
 - Modo produccion: carga real de dependencias nuevas.
@@ -65,16 +65,16 @@ Luego agregar las variables de entorno de `.env.production.example`.
 Si aparecen dos despliegues desde el mismo repositorio, usar como principal:
 
 ```bash
-https://sigth-orgtal.vercel.app
+https://orgtal.vercel.app
 ```
 
-El proyecto `sigth-orgtal-ll1g` puede quedar como despliegue anterior o eliminarse
-desde Vercel cuando confirmes que `sigth-orgtal` tiene las variables de Supabase
+El proyecto anterior puede quedar como despliegue historico o eliminarse
+desde Vercel cuando confirmes que `orgtal.vercel.app` tiene las variables de Supabase
 y pasa la prueba integral.
 
 ## Paso a paso simple
 
-1. Entrar a GitHub y crear un repositorio llamado `sigth_orgtal`.
+1. Entrar a GitHub y usar el repositorio del prototipo ORGTAL.
 2. Subir esta carpeta del proyecto al repositorio.
 3. Entrar a Vercel e importar el repositorio desde GitHub.
 4. Confirmar que Vercel detecte Next.js.
@@ -86,21 +86,21 @@ y pasa la prueba integral.
 
 Para facilitar el proceso:
 
-- `ABRIR_PUBLICACION_SIGTH_ORGTAL.bat`: abre GitHub, Vercel, Supabase, la carpeta del proyecto y esta guia.
-- `PUBLICAR_SIGTH_ORGTAL_WEB.bat`: guarda la version actual en Git, pide la URL del repositorio GitHub y sube el proyecto.
-- `CREAR_PAQUETE_WEB_SIGTH_ORGTAL.bat`: crea un ZIP limpio para subir manualmente si Git se bloquea por OneDrive o permisos.
+- `ABRIR_APP_ORGTAL.bat`: abre la app local o publica segun la configuracion.
+- Publicador web: guarda la version actual en Git, pide la URL del repositorio GitHub y sube el proyecto.
+- Creador de paquete web: crea un ZIP limpio para subir manualmente si Git se bloquea por OneDrive o permisos.
 
 Orden recomendado:
 
-1. Ejecutar `ABRIR_PUBLICACION_SIGTH_ORGTAL.bat`.
-2. Crear en GitHub el repositorio `sigth_orgtal`.
-3. Ejecutar `PUBLICAR_SIGTH_ORGTAL_WEB.bat`.
+1. Abrir la carpeta limpia de publicacion `_publish_orgtal_brand`.
+2. Confirmar que GitHub use el repositorio oficial del prototipo ORGTAL.
+3. Ejecutar el publicador web de ORGTAL.
 4. Pegar la URL del repositorio cuando el asistente la pida.
 5. Importar ese repositorio en Vercel.
 
 Si Git vuelve a bloquearse, usar la ruta manual explicada en `SUBIR_WEB_MANUAL.md`.
 
-Si Windows bloquea cualquier carpeta `.git`, usar `PUBLICAR_SIGTH_ORGTAL_REPO_INTERNO.bat`. Ese archivo publica desde `C:\Desarrollo\SIGTH_ORGTAL` usando un repositorio interno separado que evita el bloqueo.
+Si Windows bloquea cualquier carpeta `.git`, usar un repositorio interno fuera de OneDrive para publicar ORGTAL sin bloqueo de sincronizacion.
 
 ## Reparar bloqueo de OneDrive con Git
 
@@ -108,7 +108,7 @@ Si aparece `Permission denied` o `index.lock`, usar este orden:
 
 1. Ejecutar `REPARAR_GIT_ONEDRIVE_ADMIN.bat` como administrador.
 2. Si sigue fallando, pausar OneDrive.
-3. Ejecutar `MOVER_A_C_DESARROLLO_SIGTH_ORGTAL.bat` para copiar el proyecto a `C:\Desarrollo\SIGTH_ORGTAL`.
+3. Mover una copia del proyecto a una ruta local fuera de OneDrive, por ejemplo `C:\Desarrollo\ORGTAL`.
 4. Si Git queda bloqueado en la nueva carpeta, ejecutar `REPARAR_GIT_C_DESARROLLO_ADMIN.bat` como administrador.
 5. Si todavia aparece una regla `DENY`, ejecutar `DESBLOQUEAR_DENY_GIT_C_DESARROLLO_ADMIN.bat` como administrador.
 6. Trabajar desde la nueva carpeta fuera de OneDrive.
@@ -155,7 +155,7 @@ manteniendo primero la web estable en Vercel y conectada a Supabase.
 
 ## PWA instalable
 
-SIGTH_ORGTAL incluye:
+ORGTAL incluye:
 
 - Manifiesto web en `public/manifest.webmanifest`.
 - Icono institucional en `public/icon.svg`.
@@ -166,3 +166,4 @@ Esto permite mostrar a los jueces una app web publica que tambien puede
 instalarse como acceso directo en celulares compatibles. Para publicarla en
 Play Store se recomienda hacerlo despues de validar usuarios, Supabase,
 seguridad por roles y carga real de datos.
+

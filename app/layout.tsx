@@ -1,10 +1,10 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { OrgDataProvider } from "@/components/org-data-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sigth-orgtal.vercel.app"),
+  metadataBase: new URL("https://orgtal.vercel.app"),
   title: {
     default: "ORGTAL",
     template: "%s | ORGTAL"
@@ -39,3 +39,4 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     </html>
   );
 }
+

@@ -1,4 +1,4 @@
-create table if not exists dependencias (
+﻿create table if not exists dependencias (
   id uuid primary key default gen_random_uuid(),
   client_id text unique,
   nombre text not null,
@@ -14,6 +14,7 @@ create table if not exists dependencias (
 
 alter table dependencias add column if not exists client_id text unique;
 alter table dependencias add column if not exists estado text default 'En diagnostico';
+alter table dependencias add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists cargos (
   id uuid primary key default gen_random_uuid(),
@@ -61,6 +62,7 @@ alter table personal add column if not exists competencia_comportamental integer
 alter table personal add column if not exists autonomia integer;
 alter table personal add column if not exists disponibilidad integer;
 alter table personal add column if not exists fortalezas text;
+alter table personal add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists funciones (
   id uuid primary key default gen_random_uuid(),
@@ -107,6 +109,7 @@ alter table funciones add column if not exists nivel_ipf text;
 alter table funciones add column if not exists estado text;
 alter table funciones add column if not exists observaciones text;
 alter table funciones add column if not exists ranking_ipf integer;
+alter table funciones add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists competencias (
   id uuid primary key default gen_random_uuid(),
@@ -134,6 +137,7 @@ alter table entrevistas add column if not exists client_id text unique;
 alter table entrevistas add column if not exists respuestas integer default 0;
 alter table entrevistas add column if not exists impacto text default 'Medio';
 alter table entrevistas add column if not exists objetivo text;
+alter table entrevistas add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists preguntas (
   id uuid primary key default gen_random_uuid(),
@@ -170,6 +174,7 @@ alter table encuesta_respuestas add column if not exists average numeric default
 alter table encuesta_respuestas add column if not exists answers jsonb default '[]';
 alter table encuesta_respuestas add column if not exists created_at_label text;
 alter table encuesta_respuestas add column if not exists interpretation text;
+alter table encuesta_respuestas add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists alertas (
   id uuid primary key default gen_random_uuid(),
@@ -207,6 +212,7 @@ alter table reportes add column if not exists dependencias integer default 0;
 alter table reportes add column if not exists personal integer default 0;
 alter table reportes add column if not exists funciones integer default 0;
 alter table reportes add column if not exists alertas integer default 0;
+alter table reportes add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists evidencias (
   id uuid primary key default gen_random_uuid(),
@@ -225,6 +231,7 @@ create table if not exists evidencias (
 
 alter table evidencias add column if not exists client_id text unique;
 alter table evidencias add column if not exists dependencia text;
+alter table evidencias add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists usuarios (
   id uuid primary key default gen_random_uuid(),
@@ -236,6 +243,9 @@ create table if not exists usuarios (
   estado text default 'Activo',
   created_at timestamptz default now()
 );
+
+alter table usuarios add column if not exists auth_user_id uuid;
+alter table usuarios add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists alertas_trazabilidad (
   id uuid primary key default gen_random_uuid(),
@@ -250,6 +260,7 @@ create table if not exists alertas_trazabilidad (
 );
 
 alter table alertas_trazabilidad add column if not exists alerta_client_id text unique;
+alter table alertas_trazabilidad add column if not exists diagnostico_id text default 'orgtal-demo';
 
 create table if not exists encuestas_respuestas (
   id uuid primary key default gen_random_uuid(),
@@ -642,3 +653,4 @@ begin
     with check (bucket_id = 'evidencias');
   end if;
 end $$;
+

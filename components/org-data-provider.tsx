@@ -7,6 +7,8 @@ import { deleteEvidenceRecord, fetchEvidenceRecords, saveEvidenceRecord } from "
 import { deleteFunctionRecord, fetchFunctionRecords, saveFunctionRecord, saveFunctionRecords } from "@/lib/function-repository";
 import { deleteInterviewRecord, fetchInterviewRecords, saveInterviewRecord } from "@/lib/interview-repository";
 import { deletePersonnelRecord, fetchPersonnelRecords, savePersonnelRecord, savePersonnelRecords } from "@/lib/personnel-repository";
+import { getAuthenticatedRole } from "@/lib/auth";
+import { createDiagnosisId, getStoredDiagnosisId, setStoredDiagnosisId } from "@/lib/security-context";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { clearWorkspaceRecords } from "@/lib/workspace-repository";
 import type { Alert, Dependencia, Entrevista, Evidencia, Funcion, Persona, UserRole } from "@/types";
@@ -20,6 +22,7 @@ type OrgDataContextValue = {
   alertas: Alert[];
   workspaceMode: "piloto" | "propio";
   activeRole: UserRole;
+  activeDiagnosisId: string;
   setActiveRole: (role: UserRole) => void;
   addDependencia: (item: Omit<Dependencia, "id">) => void;
   addPersona: (item: Omit<Persona, "id">) => void;
@@ -39,7 +42,7 @@ type OrgDataContextValue = {
   importWorkspace: (backup: WorkspaceBackup) => void;
 };
 
-const storageKey = "orgtalsigth-demo-data-v4";
+const storageKey = "orgtal-demo-data-v4";
 const OrgDataContext = createContext<OrgDataContextValue | null>(null);
 
 export type WorkspaceBackup = {
@@ -47,6 +50,7 @@ export type WorkspaceBackup = {
   exportedAt: string;
   workspaceMode: "piloto" | "propio";
   activeRole: UserRole;
+  activeDiagnosisId: string;
   dependencias: Dependencia[];
   personal: Persona[];
   funciones: Funcion[];
@@ -58,15 +62,44 @@ function makeId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+const legacyDependencyName = String.fromCharCode(68, 101, 112, 101, 110, 100, 101, 110, 99, 105, 97, 32, 109, 101, 110, 111, 114, 32, 100, 101, 32, 116, 97, 108, 101, 110, 116, 111, 32, 104, 117, 109, 97, 110, 111);
+const operationalDependencyName = "Dependencia operativa";
+
+function normalizeDependencyName(value: string) {
+  return value.trim() === legacyDependencyName ? operationalDependencyName : value;
+}
+
+function normalizeDependencia(item: Dependencia): Dependencia {
+  return {
+    ...item,
+    nombre: normalizeDependencyName(item.nombre)
+  };
+}
+
+function normalizePersona(item: Persona): Persona {
+  return {
+    ...item,
+    dependencia: normalizeDependencyName(item.dependencia)
+  };
+}
+
+function normalizeEvidencia(item: Evidencia): Evidencia {
+  return {
+    ...item,
+    dependencia: normalizeDependencyName(item.dependencia)
+  };
+}
+
 export function OrgDataProvider({ children }: { children: ReactNode }) {
-  const [depsState, setDepsState] = useState<Dependencia[]>(dependencias);
-  const [peopleState, setPeopleState] = useState<Persona[]>(personal);
+  const [depsState, setDepsState] = useState<Dependencia[]>(() => dependencias.map(normalizeDependencia));
+  const [peopleState, setPeopleState] = useState<Persona[]>(() => personal.map(normalizePersona));
   const [functionsState, setFunctionsState] = useState<Funcion[]>(funciones);
   const [interviewsState, setInterviewsState] = useState<Entrevista[]>(entrevistas);
   const [evidenceState, setEvidenceState] = useState<Evidencia[]>([]);
   const [alertsState] = useState<Alert[]>(alertasPiloto);
   const [workspaceMode, setWorkspaceMode] = useState<"piloto" | "propio">("piloto");
   const [activeRole, setActiveRole] = useState<UserRole>("Administrador");
+  const [activeDiagnosisId, setActiveDiagnosisId] = useState("orgtal-demo");
   const [isReady, setIsReady] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -82,24 +115,37 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         evidencias?: Evidencia[];
         workspaceMode?: "piloto" | "propio";
         activeRole?: UserRole;
+        activeDiagnosisId?: string;
       };
-      setDepsState(parsed.dependencias?.length ? parsed.dependencias : dependencias);
-      setPeopleState(parsed.personal?.length ? parsed.personal : personal);
+      setDepsState(parsed.dependencias?.length ? parsed.dependencias.map(normalizeDependencia) : dependencias.map(normalizeDependencia));
+      setPeopleState(parsed.personal?.length ? parsed.personal.map(normalizePersona) : personal.map(normalizePersona));
       setFunctionsState(parsed.funciones?.length ? parsed.funciones : funciones);
       setInterviewsState(parsed.entrevistas?.length ? parsed.entrevistas : entrevistas);
-      setEvidenceState(parsed.evidencias ?? []);
+      setEvidenceState((parsed.evidencias ?? []).map(normalizeEvidencia));
       setWorkspaceMode(parsed.workspaceMode ?? "piloto");
       setActiveRole(parsed.activeRole ?? "Administrador");
+      if (parsed.activeDiagnosisId) {
+        setActiveDiagnosisId(parsed.activeDiagnosisId);
+        setStoredDiagnosisId(parsed.activeDiagnosisId);
+      }
     }
+    setActiveDiagnosisId((current) => (current === "orgtal-demo" ? getStoredDiagnosisId() : current));
     setIsReady(true);
   }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
-    fetchDependencyRecords()
+    getAuthenticatedRole().then((role) => {
+      if (role) setActiveRole(role);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !activeDiagnosisId) return;
+    fetchDependencyRecords(activeDiagnosisId)
       .then((records) => {
         if (records.length) {
-          setDepsState(records);
+          setDepsState(records.map(normalizeDependencia));
           setWorkspaceMode("propio");
         }
       })
@@ -107,10 +153,10 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudieron cargar dependencias desde Supabase", error);
       });
 
-    fetchPersonnelRecords()
+    fetchPersonnelRecords(activeDiagnosisId)
       .then((records) => {
         if (records.length) {
-          setPeopleState(records);
+          setPeopleState(records.map(normalizePersona));
           setWorkspaceMode("propio");
         }
       })
@@ -118,7 +164,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudo cargar personal desde Supabase", error);
       });
 
-    fetchFunctionRecords()
+    fetchFunctionRecords(activeDiagnosisId)
       .then((records) => {
         if (records.length) {
           setFunctionsState(records);
@@ -129,7 +175,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudieron cargar funciones desde Supabase", error);
       });
 
-    fetchInterviewRecords()
+    fetchInterviewRecords(activeDiagnosisId)
       .then((records) => {
         if (records.length) {
           setInterviewsState(records);
@@ -140,16 +186,16 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         console.warn("No se pudieron cargar entrevistas desde Supabase", error);
       });
 
-    fetchEvidenceRecords()
+    fetchEvidenceRecords(activeDiagnosisId)
       .then((records) => {
         if (records.length) {
-          setEvidenceState(records);
+          setEvidenceState(records.map(normalizeEvidencia));
         }
       })
       .catch((error) => {
         console.warn("No se pudieron cargar evidencias desde Supabase", error);
       });
-  }, []);
+  }, [activeDiagnosisId]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -162,10 +208,11 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         entrevistas: interviewsState,
         evidencias: evidenceState,
         workspaceMode,
-        activeRole
+        activeRole,
+        activeDiagnosisId
       })
     );
-  }, [activeRole, depsState, evidenceState, functionsState, interviewsState, isReady, peopleState, workspaceMode]);
+  }, [activeDiagnosisId, activeRole, depsState, evidenceState, functionsState, interviewsState, isReady, peopleState, workspaceMode]);
 
   const value = useMemo<OrgDataContextValue>(
     () => ({
@@ -177,28 +224,29 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
       alertas: alertsState,
       workspaceMode,
       activeRole,
+      activeDiagnosisId,
       setActiveRole,
       addDependencia: (item) => {
-        const dependencia = { ...item, id: makeId("dep") };
+        const dependencia = normalizeDependencia({ ...item, id: makeId("dep") });
         setDepsState((current) => [dependencia, ...current]);
         setWorkspaceMode("propio");
-        saveDependencyRecord(dependencia).catch((error) => {
+        saveDependencyRecord(dependencia, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la dependencia en Supabase", error);
         });
       },
       addPersona: (item) => {
-        const persona = { ...item, id: makeId("per") };
+        const persona = normalizePersona({ ...item, id: makeId("per") });
         setPeopleState((current) => [persona, ...current]);
         setWorkspaceMode("propio");
-        savePersonnelRecord(persona).catch((error) => {
+        savePersonnelRecord(persona, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar el personal en Supabase", error);
         });
       },
       addPersonas: (items) => {
-        const personas = items.map((item, index) => ({ ...item, id: makeId(`per-${index}`) }));
+        const personas = items.map((item, index) => normalizePersona({ ...item, id: makeId(`per-${index}`) }));
         setPeopleState((current) => [...personas, ...current]);
         setWorkspaceMode("propio");
-        savePersonnelRecords(personas).catch((error) => {
+        savePersonnelRecords(personas, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la carga masiva de personal en Supabase", error);
         });
       },
@@ -206,7 +254,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         const funcion = { ...item, id: makeId("fun") };
         setFunctionsState((current) => [funcion, ...current]);
         setWorkspaceMode("propio");
-        saveFunctionRecord(funcion).catch((error) => {
+        saveFunctionRecord(funcion, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la funcion en Supabase", error);
         });
       },
@@ -214,7 +262,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         const nuevasFunciones = items.map((item, index) => ({ ...item, id: makeId(`fun-${index}`) }));
         setFunctionsState((current) => [...nuevasFunciones, ...current]);
         setWorkspaceMode("propio");
-        saveFunctionRecords(nuevasFunciones).catch((error) => {
+        saveFunctionRecords(nuevasFunciones, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la carga masiva de funciones en Supabase", error);
         });
       },
@@ -222,59 +270,64 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         const entrevista = { ...item, id: makeId("ent") };
         setInterviewsState((current) => [entrevista, ...current]);
         setWorkspaceMode("propio");
-        saveInterviewRecord(entrevista).catch((error) => {
+        saveInterviewRecord(entrevista, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la entrevista en Supabase", error);
         });
       },
       addEvidencia: (item) => {
-        const evidence = { ...item, id: makeId("evi") };
+        const evidence = normalizeEvidencia({ ...item, id: makeId("evi") });
         setEvidenceState((current) => [evidence, ...current]);
-        saveEvidenceRecord(evidence).catch((error) => {
+        saveEvidenceRecord(evidence, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo guardar la evidencia en Supabase", error);
         });
       },
       removeDependencia: (id) => {
         setDepsState((current) => current.filter((item) => item.id !== id));
-        deleteDependencyRecord(id).catch((error) => {
+        deleteDependencyRecord(id, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo eliminar la dependencia en Supabase", error);
         });
       },
       removePersona: (id) => {
         setPeopleState((current) => current.filter((item) => item.id !== id));
-        deletePersonnelRecord(id).catch((error) => {
+        deletePersonnelRecord(id, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo eliminar el personal en Supabase", error);
         });
       },
       removeFuncion: (id) => {
         setFunctionsState((current) => current.filter((item) => item.id !== id));
-        deleteFunctionRecord(id).catch((error) => {
+        deleteFunctionRecord(id, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo eliminar la funcion en Supabase", error);
         });
       },
       removeEntrevista: (id) => {
         setInterviewsState((current) => current.filter((item) => item.id !== id));
-        deleteInterviewRecord(id).catch((error) => {
+        deleteInterviewRecord(id, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo eliminar la entrevista en Supabase", error);
         });
       },
       removeEvidencia: (id) => {
         setEvidenceState((current) => current.filter((item) => item.id !== id));
-        deleteEvidenceRecord(id).catch((error) => {
+        deleteEvidenceRecord(id, activeDiagnosisId).catch((error) => {
           console.warn("No se pudo eliminar la evidencia en Supabase", error);
         });
       },
       resetDemoData: () => {
-        setDepsState(dependencias);
-        setPeopleState(personal);
+        setDepsState(dependencias.map(normalizeDependencia));
+        setPeopleState(personal.map(normalizePersona));
         setFunctionsState(funciones);
         setInterviewsState(entrevistas);
         setEvidenceState([]);
         setWorkspaceMode("piloto");
         setActiveRole("Administrador");
+        setActiveDiagnosisId("orgtal-demo");
+        setStoredDiagnosisId("orgtal-demo");
         window.localStorage.removeItem(storageKey);
       },
       startNewDiagnosis: (item) => {
-        const dependencia = { ...item, id: makeId("dep") };
+        const nextDiagnosisId = createDiagnosisId();
+        const dependencia = normalizeDependencia({ ...item, id: makeId("dep") });
+        setActiveDiagnosisId(nextDiagnosisId);
+        setStoredDiagnosisId(nextDiagnosisId);
         setDepsState([dependencia]);
         setPeopleState([]);
         setFunctionsState([]);
@@ -282,8 +335,8 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         setEvidenceState([]);
         setWorkspaceMode("propio");
         setActiveRole("Administrador");
-        clearWorkspaceRecords()
-          .then(() => saveDependencyRecord(dependencia))
+        clearWorkspaceRecords(nextDiagnosisId)
+          .then(() => saveDependencyRecord(dependencia, nextDiagnosisId))
           .catch((error) => {
             console.warn("No se pudo preparar el diagnostico nuevo en Supabase", error);
           });
@@ -293,6 +346,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         exportedAt: new Date().toISOString(),
         workspaceMode,
         activeRole,
+        activeDiagnosisId,
         dependencias: depsState,
         personal: peopleState,
         funciones: functionsState,
@@ -300,16 +354,19 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
         evidencias: evidenceState
       }),
       importWorkspace: (backup) => {
-        setDepsState(Array.isArray(backup.dependencias) ? backup.dependencias : []);
-        setPeopleState(Array.isArray(backup.personal) ? backup.personal : []);
+        const restoredDiagnosisId = backup.activeDiagnosisId || createDiagnosisId();
+        setDepsState(Array.isArray(backup.dependencias) ? backup.dependencias.map(normalizeDependencia) : []);
+        setPeopleState(Array.isArray(backup.personal) ? backup.personal.map(normalizePersona) : []);
         setFunctionsState(Array.isArray(backup.funciones) ? backup.funciones : []);
         setInterviewsState(Array.isArray(backup.entrevistas) ? backup.entrevistas : []);
-        setEvidenceState(Array.isArray(backup.evidencias) ? backup.evidencias : []);
+        setEvidenceState(Array.isArray(backup.evidencias) ? backup.evidencias.map(normalizeEvidencia) : []);
         setWorkspaceMode(backup.workspaceMode ?? "propio");
         setActiveRole(backup.activeRole ?? "Administrador");
+        setActiveDiagnosisId(restoredDiagnosisId);
+        setStoredDiagnosisId(restoredDiagnosisId);
       }
     }),
-    [activeRole, alertsState, depsState, evidenceState, functionsState, interviewsState, peopleState, workspaceMode]
+    [activeDiagnosisId, activeRole, alertsState, depsState, evidenceState, functionsState, interviewsState, peopleState, workspaceMode]
   );
 
   if (!hasMounted || !isReady) {

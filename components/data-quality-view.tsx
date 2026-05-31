@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import type { CSSProperties } from "react";
@@ -68,7 +68,7 @@ export function DataQualityView() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sigth_orgtal-calidad-datos-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `orgtal-calidad-datos-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -245,3 +245,4 @@ export function DataQualityView() {
     </AppShell>
   );
 }
+

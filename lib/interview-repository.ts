@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 import type { SurveySubmission, SurveyTarget } from "@/lib/surveys";
 import type { Entrevista } from "@/types";
 
@@ -11,6 +12,7 @@ type InterviewRow = {
   estado: string | null;
   impacto: string | null;
   objetivo: string | null;
+  diagnostico_id?: string | null;
 };
 
 type SurveySubmissionRow = {
@@ -22,6 +24,7 @@ type SurveySubmissionRow = {
   answers: number[] | null;
   created_at_label: string | null;
   interpretation: string | null;
+  diagnostico_id?: string | null;
 };
 
 function isUuid(value: string) {
@@ -40,9 +43,10 @@ function toInterview(row: InterviewRow): Entrevista {
   };
 }
 
-function toInterviewRow(item: Entrevista): InterviewRow {
+function toInterviewRow(item: Entrevista, diagnosisId: string): InterviewRow {
   return {
     client_id: item.id,
+    diagnostico_id: diagnosisId,
     nombre: item.instrumento,
     dirigido_a: item.dirigidoA,
     respuestas: item.respuestas,
@@ -68,9 +72,10 @@ function toSurveySubmission(row: SurveySubmissionRow): SurveySubmission {
   };
 }
 
-function toSurveySubmissionRow(item: SurveySubmission): SurveySubmissionRow {
+function toSurveySubmissionRow(item: SurveySubmission, diagnosisId: string): SurveySubmissionRow {
   return {
     client_id: item.id,
+    diagnostico_id: diagnosisId,
     target: item.target,
     respondent: item.respondent,
     average: item.average,
@@ -80,12 +85,13 @@ function toSurveySubmissionRow(item: SurveySubmission): SurveySubmissionRow {
   };
 }
 
-export async function fetchInterviewRecords() {
+export async function fetchInterviewRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("entrevistas")
-    .select("id, client_id, nombre, dirigido_a, respuestas, estado, impacto, objetivo")
+    .select("id, client_id, nombre, dirigido_a, respuestas, estado, impacto, objetivo, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -95,24 +101,24 @@ export async function fetchInterviewRecords() {
   return (data || []).map((row) => toInterview(row as InterviewRow));
 }
 
-export async function saveInterviewRecord(item: Entrevista) {
+export async function saveInterviewRecord(item: Entrevista, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("entrevistas")
-    .upsert(toInterviewRow(item), { onConflict: "client_id" });
+    .upsert(toInterviewRow(item, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function deleteInterviewRecord(id: string) {
+export async function deleteInterviewRecord(id: string, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const query = isUuid(id)
-    ? supabase.from("entrevistas").delete().eq("id", id)
-    : supabase.from("entrevistas").delete().eq("client_id", id);
+    ? supabase.from("entrevistas").delete().eq("id", id).eq("diagnostico_id", diagnosisId)
+    : supabase.from("entrevistas").delete().eq("client_id", id).eq("diagnostico_id", diagnosisId);
 
   const { error } = await query;
   if (error) {
@@ -120,12 +126,13 @@ export async function deleteInterviewRecord(id: string) {
   }
 }
 
-export async function fetchSurveySubmissions() {
+export async function fetchSurveySubmissions(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("encuesta_respuestas")
-    .select("id, client_id, target, respondent, average, answers, created_at_label, interpretation")
+    .select("id, client_id, target, respondent, average, answers, created_at_label, interpretation, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -135,12 +142,12 @@ export async function fetchSurveySubmissions() {
   return (data || []).map((row) => toSurveySubmission(row as SurveySubmissionRow));
 }
 
-export async function saveSurveySubmission(item: SurveySubmission) {
+export async function saveSurveySubmission(item: SurveySubmission, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("encuesta_respuestas")
-    .upsert(toSurveySubmissionRow(item), { onConflict: "client_id" });
+    .upsert(toSurveySubmissionRow(item, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);

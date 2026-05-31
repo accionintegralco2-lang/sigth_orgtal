@@ -1,4 +1,4 @@
-import { criteriosExpertos } from "@/data/mock-data";
+﻿import { criteriosExpertos } from "@/data/mock-data";
 
 export type SurveyTarget = "Personal" | "Expertos";
 
@@ -12,7 +12,7 @@ export type SurveySubmission = {
   interpretation: string;
 };
 
-export const surveyStorageKey = "orgtalsigth-survey-submissions-v1";
+export const surveyStorageKey = "orgtal-survey-submissions-v1";
 
 export const personalSurveyQuestions = [
   "Las funciones que realizo coinciden con las funciones formalmente asignadas.",
@@ -38,3 +38,4 @@ export function interpretAverage(value: number) {
   if (value >= 3) return "Requiere seguimiento";
   return "Critico";
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
@@ -129,7 +129,7 @@ export function PersonnelManager() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sigth_orgtal-personal-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `orgtal-personal-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -450,3 +450,4 @@ export function PersonnelManager() {
     </AppShell>
   );
 }
+

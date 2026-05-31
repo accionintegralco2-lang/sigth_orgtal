@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
@@ -14,7 +14,7 @@ const roleOptions: Array<{ label: string; value: MatrixRole; detail: string }> =
   { label: "Sin asignacion", value: "", detail: "Limpiar celda" }
 ];
 
-const matrixStorageKey = "orgtalsigth-function-person-matrix-v1";
+const matrixStorageKey = "orgtal-function-person-matrix-v1";
 
 function cellClass(role: MatrixRole) {
   if (role === "R") return "matrix-cell responsible";
@@ -218,3 +218,4 @@ export function FunctionPersonMatrixView() {
     </AppShell>
   );
 }
+

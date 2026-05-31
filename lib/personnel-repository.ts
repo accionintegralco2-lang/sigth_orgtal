@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 import type { Persona } from "@/types";
 
 type PersonnelRow = {
@@ -20,6 +21,7 @@ type PersonnelRow = {
   disponibilidad: number | null;
   fortalezas: string | null;
   carga_laboral_estimada: number | null;
+  diagnostico_id?: string | null;
 };
 
 function isUuid(value: string) {
@@ -48,9 +50,10 @@ function toPersona(row: PersonnelRow): Persona {
   };
 }
 
-function toRow(persona: Persona): PersonnelRow {
+function toRow(persona: Persona, diagnosisId: string): PersonnelRow {
   return {
     client_id: persona.id,
+    diagnostico_id: diagnosisId,
     codigo: persona.codigo || null,
     nombre: persona.nombre,
     cargo: persona.cargo,
@@ -70,12 +73,13 @@ function toRow(persona: Persona): PersonnelRow {
   };
 }
 
-export async function fetchPersonnelRecords() {
+export async function fetchPersonnelRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("personal")
-    .select("id, client_id, codigo, nombre, cargo, dependencia, perfil_profesional, experiencia, tiempo_en_cargo, numero_funciones, complejidad, competencia_tecnica, competencia_digital, competencia_comportamental, autonomia, disponibilidad, fortalezas, carga_laboral_estimada")
+    .select("id, client_id, codigo, nombre, cargo, dependencia, perfil_profesional, experiencia, tiempo_en_cargo, numero_funciones, complejidad, competencia_tecnica, competencia_digital, competencia_comportamental, autonomia, disponibilidad, fortalezas, carga_laboral_estimada, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -85,36 +89,36 @@ export async function fetchPersonnelRecords() {
   return (data || []).map((row) => toPersona(row as PersonnelRow));
 }
 
-export async function savePersonnelRecord(persona: Persona) {
+export async function savePersonnelRecord(persona: Persona, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("personal")
-    .upsert(toRow(persona), { onConflict: "client_id" });
+    .upsert(toRow(persona, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function savePersonnelRecords(personas: Persona[]) {
+export async function savePersonnelRecords(personas: Persona[], diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase || !personas.length) return;
 
   const { error } = await supabase
     .from("personal")
-    .upsert(personas.map(toRow), { onConflict: "client_id" });
+    .upsert(personas.map((persona) => toRow(persona, diagnosisId)), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
   }
 }
 
-export async function deletePersonnelRecord(id: string) {
+export async function deletePersonnelRecord(id: string, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const query = isUuid(id)
-    ? supabase.from("personal").delete().eq("id", id)
-    : supabase.from("personal").delete().eq("client_id", id);
+    ? supabase.from("personal").delete().eq("id", id).eq("diagnostico_id", diagnosisId)
+    : supabase.from("personal").delete().eq("client_id", id).eq("diagnostico_id", diagnosisId);
 
   const { error } = await query;
   if (error) {

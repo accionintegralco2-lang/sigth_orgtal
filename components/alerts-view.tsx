@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
@@ -18,7 +18,7 @@ const filters: Array<{ label: string; value: RiskLevel | "todas" }> = [
 
 type AlertTrace = AlertTraceRecord;
 
-const traceStorageKey = "orgtalsigth-alert-trace-v1";
+const traceStorageKey = "orgtal-alert-trace-v1";
 
 function csvValue(value: string | number | undefined) {
   return `"${String(value ?? "").replaceAll('"', '""')}"`;
@@ -129,7 +129,7 @@ export function AlertsView() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sigth_orgtal-trazabilidad-alertas-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `orgtal-trazabilidad-alertas-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -268,3 +268,4 @@ export function AlertsView() {
     </AppShell>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
@@ -188,7 +188,7 @@ export function SettingsView() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sigth_orgtal-respaldo-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `orgtal-respaldo-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -266,14 +266,14 @@ export function SettingsView() {
   }
 
   function downloadPersonalTemplate() {
-    downloadCsv("plantilla-personal-sigth_orgtal.csv", [
+    downloadCsv("plantilla-personal-orgtal.csv", [
       ["codigo", "nombre", "cargo", "dependencia", "formacion", "experiencia", "tiempoCargo", "funciones", "complejidad", "cargaLaboral", "competenciaTecnica", "competenciaDigital", "competenciaComportamental", "fortalezas"],
       ["P01", "Nombre funcionario", "Cargo", dependencias[0]?.nombre ?? "Dependencia", "Formacion", "5 anos", "1 ano", "3", "Media", "50", "4", "4", "4", "Fortalezas principales"]
     ]);
   }
 
   function downloadFunctionsTemplate() {
-    downloadCsv("plantilla-funciones-sigth_orgtal.csv", [
+    downloadCsv("plantilla-funciones-orgtal.csv", [
       ["codigo", "nombre", "responsable", "respaldo", "tipo", "proceso", "producto", "frecuencia", "horasSemana", "ipf", "nivelIpf", "estado", "riesgo", "observaciones"],
       ["F01", "Nombre de la funcion", "P01", "P02", "Misional", "Proceso", "Producto", "Semanal", "4", "4.2", "Alta", "Cubierta", "alto", "Observacion"]
     ]);
@@ -892,3 +892,4 @@ export function SettingsView() {
     </AppShell>
   );
 }
+

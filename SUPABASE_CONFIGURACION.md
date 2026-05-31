@@ -1,8 +1,8 @@
-# Configuracion de Supabase para SIGTH_ORGTAL
+# Configuracion de Supabase para ORGTAL
 
-Esta guia conecta la app publica con una base de datos real. La app puede seguir mostrando datos piloto, pero al activar Supabase empieza a guardar evidencias reales.
+Esta guia conecta la app publica ORGTAL con una base de datos real. La app puede seguir mostrando datos piloto, pero al activar Supabase tambien puede guardar dependencias nuevas, personal, funciones, entrevistas, reportes y evidencias reales.
 
-## Estado verificado 2026-05-18
+## Estado verificado 2026-05-31
 
 Proyecto Supabase:
 
@@ -13,7 +13,7 @@ wflfroecchxgfswuwpnp
 Web principal:
 
 ```bash
-https://sigth-orgtal.vercel.app
+https://orgtal.vercel.app
 ```
 
 Estado actual:
@@ -21,15 +21,15 @@ Estado actual:
 - Variables de entorno en Vercel: configuradas.
 - Despliegue principal en Vercel: activo.
 - Archivo local `.env.local`: configurado en este PC.
-- Tablas en Supabase: pendientes de crear.
-- Bucket `evidencias`: pendiente de crear.
+- Tablas principales en Supabase: creadas y con lectura disponible para el prototipo.
+- Bucket `evidencias`: creado y responde correctamente.
+- Permisos publicos de prueba: habilitados para sustentacion y validacion del prototipo.
 
-Si en la app aparece un error de tablas o bucket, no es problema de Vercel:
-falta ejecutar `supabase/schema.sql` en Supabase.
+Nota de seguridad: los permisos amplios son utiles para demostrar el prototipo ante jueces o tutores. Para uso institucional con usuarios externos permanentes, deben cerrarse por roles reales: Administrador, Director, Jefe de dependencia, Analista, Experto validador y Personal.
 
 ## 1. Crear o abrir el proyecto
 
-Entrar a Supabase y abrir el proyecto destinado a SIGTH_ORGTAL:
+Entrar a Supabase y abrir el proyecto destinado a ORGTAL:
 
 ```bash
 https://supabase.com/dashboard/project/wflfroecchxgfswuwpnp
@@ -37,19 +37,24 @@ https://supabase.com/dashboard/project/wflfroecchxgfswuwpnp
 
 ## 2. Crear tablas y permisos
 
-En Supabase:
+Si se instala el proyecto en una base nueva, ejecutar en Supabase el archivo:
 
-1. Abrir SQL Editor.
-2. Crear una nueva consulta.
-3. Copiar primero el contenido completo de `supabase/schema_minimo_funcional.sql`.
-4. Ejecutar la consulta.
+```bash
+supabase/schema.sql
+```
 
-Ese archivo crea las tablas que la app necesita para pasar la prueba integral:
-`dependencias`, `personal`, `funciones`, `entrevistas`, `encuesta_respuestas`,
-`alertas_trazabilidad`, `reportes` y `evidencias`.
+Ese archivo crea o actualiza las tablas principales que la app necesita:
 
-Luego, cuando esa prueba ya este en verde, se puede ejecutar `supabase/schema.sql`
-como version completa del modelo.
+- `dependencias`
+- `personal`
+- `funciones`
+- `entrevistas`
+- `encuesta_respuestas`
+- `alertas_trazabilidad`
+- `reportes`
+- `evidencias`
+
+Tambien habilita politicas de acceso para que el prototipo pueda leer, guardar, actualizar y eliminar registros durante la demostracion.
 
 ## 3. Revisar Storage
 
@@ -59,13 +64,17 @@ En Storage debe existir un bucket llamado:
 evidencias
 ```
 
-Si no aparece, volver a ejecutar `supabase/schema.sql`.
+Este bucket guarda documentos, soportes, anexos, actas, manuales, organigramas y evidencias asociadas al diagnostico. Si la carga de evidencias falla con un mensaje de permisos, revisar las politicas del bucket o ejecutar el script de restauracion publica para la demo:
+
+```bash
+supabase/restore_public_evidence_upload.sql
+```
 
 ## 4. Configurar Vercel
 
-En Vercel, abrir el proyecto SIGTH_ORGTAL y entrar a Settings > Environment Variables.
+En Vercel, abrir el proyecto ORGTAL y entrar a Settings > Environment Variables.
 
-Agregar o verificar:
+Verificar estas variables:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
@@ -73,26 +82,24 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=TU_LLAVE_ANON_PUBLICA
 NEXT_PUBLIC_SUPABASE_EVIDENCE_BUCKET=evidencias
 ```
 
-Despues hacer redeploy.
-
-Nota: en la revision del 2026-05-18 estas variables ya quedaron configuradas
-en Vercel para produccion, vista previa y desarrollo.
+Despues de cambiar variables, hacer redeploy del proyecto en Vercel.
 
 ## 5. Probar en la app
 
 Abrir la app publica:
 
 ```bash
-https://sigth-orgtal.vercel.app
+https://orgtal.vercel.app
 ```
 
 Luego:
 
 1. Entrar a Configuracion.
-2. Probar conexion con Supabase.
-3. Entrar a Evidencias.
-4. Registrar una evidencia.
-5. Confirmar en Supabase que se creo el registro en la tabla `evidencias`.
+2. Usar el boton `Probar conexion`.
+3. Usar el boton `Prueba integral Supabase`.
+4. Entrar a Evidencias.
+5. Registrar una evidencia de prueba.
+6. Confirmar en Supabase que se creo el registro en la tabla `evidencias`.
 
 ## 6. Prueba integral
 
@@ -109,9 +116,16 @@ La app revisa:
 - Acceso al bucket `evidencias`.
 - Creacion y eliminacion de un registro temporal en `dependencias`.
 
-Si todos los puntos aparecen como `Listo`, la app queda preparada para guardar
-datos reales de dependencias nuevas.
+Si todos los puntos aparecen como `Listo`, ORGTAL queda preparado para guardar datos reales de dependencias nuevas.
 
-## Estado actual
+## Estado funcional
 
-Los primeros modulos conectados a Supabase son Dependencias, Personal, Funciones, Entrevistas, Encuestas, Alertas, Reportes y Evidencias. Los demas modulos siguen funcionando con datos piloto/locales y se pueden conectar uno por uno para evitar que el sistema se atasque.
+Los modulos conectados a Supabase son Dependencias, Personal, Funciones, Entrevistas, Encuestas, Alertas, Reportes y Evidencias. Los demas modulos siguen usando calculos locales y datos del diagnostico activo para evitar que el sistema se vuelva pesado.
+
+Para uso real, se recomienda avanzar en este orden:
+
+1. Mantener la version publica estable para sustentacion.
+2. Activar autenticacion real de usuarios.
+3. Cerrar permisos por rol.
+4. Separar cada diagnostico por dependencia o entidad.
+5. Validar carga masiva y evidencias con datos reales.

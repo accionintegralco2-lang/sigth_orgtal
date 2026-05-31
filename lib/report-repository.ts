@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { defaultDiagnosisId } from "@/lib/security-context";
 
 export type ReportHistoryItem = {
   id: string;
@@ -28,6 +29,7 @@ type ReportRow = {
   funciones: number | null;
   alertas: number | null;
   contenido: Record<string, unknown> | null;
+  diagnostico_id?: string | null;
 };
 
 function toReport(row: ReportRow): ReportHistoryItem {
@@ -46,9 +48,10 @@ function toReport(row: ReportRow): ReportHistoryItem {
   };
 }
 
-function toRow(item: ReportHistoryItem): ReportRow {
+function toRow(item: ReportHistoryItem, diagnosisId: string): ReportRow {
   return {
     client_id: item.id,
+    diagnostico_id: diagnosisId,
     nombre: item.nombre,
     tipo: item.tipo,
     fecha_label: item.fecha,
@@ -70,12 +73,13 @@ function toRow(item: ReportHistoryItem): ReportRow {
   };
 }
 
-export async function fetchReportRecords() {
+export async function fetchReportRecords(diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase
     .from("reportes")
-    .select("id, client_id, nombre, tipo, fecha_label, estado, calidad, riesgo, dependencias, personal, funciones, alertas, contenido")
+    .select("id, client_id, nombre, tipo, fecha_label, estado, calidad, riesgo, dependencias, personal, funciones, alertas, contenido, diagnostico_id")
+    .eq("diagnostico_id", diagnosisId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -85,12 +89,12 @@ export async function fetchReportRecords() {
   return (data || []).map((row) => toReport(row as ReportRow));
 }
 
-export async function saveReportRecord(item: ReportHistoryItem) {
+export async function saveReportRecord(item: ReportHistoryItem, diagnosisId = defaultDiagnosisId) {
   if (!isSupabaseConfigured || !supabase) return;
 
   const { error } = await supabase
     .from("reportes")
-    .upsert(toRow(item), { onConflict: "client_id" });
+    .upsert(toRow(item, diagnosisId), { onConflict: "client_id" });
 
   if (error) {
     throw new Error(error.message);
