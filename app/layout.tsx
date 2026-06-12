@@ -1,5 +1,6 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { AppMonitor } from "@/components/app-monitor";
 import { OrgDataProvider } from "@/components/org-data-provider";
 import "./globals.css";
 
@@ -34,9 +35,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="es">
       <body>
-        <OrgDataProvider>{children}</OrgDataProvider>
+        <OrgDataProvider>
+          <AppMonitor />
+          {children}
+        </OrgDataProvider>
       </body>
     </html>
   );
 }
-
